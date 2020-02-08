@@ -8,6 +8,8 @@ namespace CSharp_Image_Action
     {
         public static string Jekyll_data_Folder = "_data";
         public static string Jekyll_data_File = "images.json";
+        public static string THUMBNAILS = "\\Thumbnails";
+
         static void Main(string[] args)
         {
             var ImgDir = args[0];
@@ -42,12 +44,14 @@ namespace CSharp_Image_Action
             
             var ImagesList = ih.ImageList;
 
-            ImageResizer ir = new ImageResizer(/* set options here */);
+            System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(ImgDir + THUMBNAILS);
+
+            ImageResizer ir = new ImageResizer(di,256, 256, 1024, 1024, true, true);
 
             foreach(ImageDescriptor id in ImagesList)
             {
                 id.FillBasicInfo();
-                
+
                 if(ir.ThumbnailNeeded(id))
                     ir.GenerateThumbnail(id);
 
