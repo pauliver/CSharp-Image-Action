@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace CSharp_Image_Action
 {
@@ -50,6 +52,11 @@ namespace CSharp_Image_Action
                 if(ir.NeedsResize(id)) // when our algorithm gets better, or or image sizes change
                     ir.ResizeImages(id);
             }
+
+            // Generate 1 sets of json to save (1 deep tree?)
+            // -> Gallery structure Gallery needs a thumbnail, and a name
+            //   -> we probably need to generate a markdown page for it too... 
+            //      -> Can hide more structure in the markdown page
 
         }
     }
