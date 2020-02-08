@@ -1,21 +1,23 @@
+using System.Collections;
 using System.IO;
 
 namespace CSharp_Image_Action
 {
     public class ImageHunter
     {
-        //some structure to hold images & directories
-        // should it be a tree or just a list?
-
-        int ImagesFound = 0;
-        int MaxImages = 32768;
-
-        int MaxDirectoryDepth = 4;
-
-        string[] ValidImageExtensions;
-
         public int NumberImagesFound
         {get{ return ImagesFound;}}
+
+        public ArrayList ImageList { get => imageList;}
+
+        protected System.Collections.ArrayList imageList = new System.Collections.ArrayList();
+
+        protected int ImagesFound = 0;
+        protected int MaxImages = 32768;
+
+        protected int MaxDirectoryDepth = 4;
+
+        protected string[] ValidImageExtensions;
 
         public ImageHunter(System.IO.DirectoryInfo directory, System.String[] Extensions, int Max_Images = 32768, int Directory_Depth = 4)
         {
@@ -25,10 +27,10 @@ namespace CSharp_Image_Action
             RecurseDirectory(directory,0);
         }
 
-        protected void MatchImages(System.IO.FileInfo fi)
+        protected void MatchImages(System.IO.DirectoryInfo directory, System.IO.FileInfo fi)
         {
             ++ImagesFound;
-            //@@ ADD TO IMAGE LIST HERE
+            object p = imageList.Add(new ImageDescriptor(directory,fi));
         }
         protected void RecurseDirectory(System.IO.DirectoryInfo directory, int CurrentDepth)
         {
@@ -62,7 +64,7 @@ namespace CSharp_Image_Action
 
                 if(ValidExtension)
                 {
-                    MatchImages(fi);
+                    MatchImages(directory,fi);
                 }else{                
                     //would be good to log an "info" "filename" with "extension" invalid
                 }
