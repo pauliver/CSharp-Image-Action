@@ -1,16 +1,21 @@
 using System.IO;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace CSharp_Image_Action
 {
     public class ImageDescriptor
     {
-        public string ThumbnailPath { get => thumbnail_path; set => thumbnail_path = value; }
+        private System.IO.FileInfo thumbNailFile;
+        public string ThumbnailName { get => thumbnail_name; set => thumbnail_name = value; }
         public string Name { get => name; set => name = value; }
         public string Folder { get => folder; set => folder = value; }
         public string ImageHeight { get => height; set => height = value; }
         public string ImageWidth { get => width; set => width = value; }
-
-        private string thumbnail_path;
+        public FileInfo ThumbNailFile { get => thumbNailFile; set => thumbNailFile = value; }
+        public FileInfo ImageFile { get => file; }
+        private string thumbnail_name;
         private string name;
         private string folder;
         private string height;
@@ -24,6 +29,18 @@ namespace CSharp_Image_Action
             file = fi;
             name = fi.Name;
             folder = di.FullName;
+        }
+
+        public void FillBasicInfo()
+        {
+            thumbnail_name = directory.Name + "_" + file.Name + "_" + file.CreationTimeUtc.ToString();
+
+            var inStream = file.OpenRead();
+            using (Image image = Image.Load(inStream))
+            {
+                height = image.height;
+                width = image.width;
+            }
         }
     }
 }

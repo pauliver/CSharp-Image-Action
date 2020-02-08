@@ -46,6 +46,8 @@ namespace CSharp_Image_Action
 
             foreach(ImageDescriptor id in ImagesList)
             {
+                id.FillBasicInfo();
+                
                 if(ir.ThumbnailNeeded(id))
                     ir.GenerateThumbnail(id);
 
