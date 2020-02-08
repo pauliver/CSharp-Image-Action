@@ -58,6 +58,9 @@ namespace CSharp_Image_Action
             //   -> we probably need to generate a markdown page for it too... 
             //      -> Can hide more structure in the markdown page
 
+            //https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-how-to
+            //jsonString = JsonSerializer.Serialize(weatherForecast);
+            //File.WriteAllText(fileName, jsonString);
         }
     }
 }
