@@ -17,7 +17,7 @@ namespace CSharp_Image_Action
             public bool BiasForLongEdge;
             public bool PreserveRatio;
 
-            Box(int width,int height,bool biasforlongedge, bool preserveratio)
+            public Box(int width,int height,bool biasforlongedge, bool preserveratio)
             {
                 this.Width = width;
                 this.Height = height;
@@ -69,13 +69,13 @@ namespace CSharp_Image_Action
         
         protected bool IsCorrectResolution(ImageDescriptor id, Box sizing )
         {
-
+            return false;
         }
 
         protected Box ReSizeToBox(ImageDescriptor imageDescriptor, Box sizing, System.IO.FileStream outstream)
         {
             System.IO.FileInfo fi = imageDescriptor.ImageFile;
-            
+            return new Box();   
         }
     }
 }
