@@ -11,15 +11,15 @@ namespace CSharp_Image_Action
         public string ThumbnailName { get => thumbnail_name; set => thumbnail_name = value; }
         public string Name { get => name; set => name = value; }
         public string Folder { get => folder; set => folder = value; }
-        public string ImageHeight { get => height; set => height = value; }
-        public string ImageWidth { get => width; set => width = value; }
+        public int ImageHeight { get => height; set => height = value; }
+        public int ImageWidth { get => width; set => width = value; }
         public FileInfo ThumbNailFile { get => thumbNailFile; set => thumbNailFile = value; }
         public FileInfo ImageFile { get => file; }
         private string thumbnail_name;
         private string name;
         private string folder;
-        private string height;
-        private string width;
+        private int height;
+        private int width;
 
         protected DirectoryInfo directory;
         protected FileInfo file;
@@ -38,8 +38,8 @@ namespace CSharp_Image_Action
             var inStream = file.OpenRead();
             using (Image image = Image.Load(inStream))
             {
-                height = image.height;
-                width = image.width;
+                height = image.Height;
+                width = image.Width;
             }
         }
     }
