@@ -6,4 +6,8 @@
     <RootNamespace>CSharp_Image_Action</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="ImageSharp" Version="0.0.0" />
+  </ItemGroup>
+
 </Project>
