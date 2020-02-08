@@ -34,7 +34,7 @@ namespace CSharp_Image_Action
 
         public void ResizeImages(ImageDescriptor id)
         {
-
+            //https://docs.sixlabors.com/articles/ImageSharp/Resize.html
         }
 
     }
