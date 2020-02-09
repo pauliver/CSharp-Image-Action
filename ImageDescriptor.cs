@@ -34,12 +34,15 @@ namespace CSharp_Image_Action
         public void FillBasicInfo()
         {
             thumbnail_name = directory.Name + "_" + file.Name + "_" + file.CreationTimeUtc.ToString();
-
-            var inStream = file.OpenRead();
-            using (Image image = Image.Load(inStream))
+            
             {
-                height = image.Height;
-                width = image.Width;
+                var inStream = file.OpenRead();
+                using (Image image = Image.Load(inStream))
+                {
+                    height = image.Height;
+                    width = image.Width;
+                }
+                inStream.Close();
             }
         }
     }

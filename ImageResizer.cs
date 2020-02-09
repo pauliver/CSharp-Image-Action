@@ -1,6 +1,7 @@
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Formats.Png;
 
 namespace CSharp_Image_Action
 {
@@ -17,7 +18,7 @@ namespace CSharp_Image_Action
             public bool BiasForLongEdge;
             public bool PreserveRatio;
 
-            public Box(int width,int height,bool biasforlongedge, bool preserveratio)
+            public Box(int width,int height, bool preserveratio = true,bool biasforlongedge = true)
             {
                 this.Width = width;
                 this.Height = height;
@@ -34,14 +35,14 @@ namespace CSharp_Image_Action
 
         System.IO.DirectoryInfo ThumbNailDirectory;
 
-        public ImageResizer(System.IO.DirectoryInfo thumbnaildirectory, int ThumbNail_Width = 256, int ThumbNail_Height = 256, int Main_Width = 1024, int Main_Height = 1024, bool BiasForLongEdge = true, bool preserve_ratio = true)
+        public ImageResizer(System.IO.DirectoryInfo thumbnaildirectory, int ThumbNail_Width = 256, int ThumbNail_Height = 256, int Main_Width = 1024, int Main_Height = 1024, bool preserve_ratio = true, bool BiasForLongEdge = true)
         {
-            this.Thumbnail = new Box(ThumbNail_Width,ThumbNail_Height,BiasForLongEdge,preserve_ratio);
-            this.StandardImage = new Box(Main_Width,Main_Height,BiasForLongEdge,preserve_ratio);
+            this.Thumbnail = new Box(ThumbNail_Width,ThumbNail_Height,preserve_ratio,BiasForLongEdge);
+            this.StandardImage = new Box(Main_Width,Main_Height,preserve_ratio,BiasForLongEdge);
             this.ThumbNailDirectory = thumbnaildirectory;
         }
 
-        /// Thumbnail doesn't exists, or needs updates
+        /// Thumbnail doesn't exists (we currently don't handle a thumbnail of the wrong size)
         public bool ThumbnailNeeded(ImageDescriptor id)
         {
             id.ThumbNailFile = new System.IO.FileInfo(ThumbNailDirectory.FullName + id.ThumbnailName);
@@ -60,6 +61,7 @@ namespace CSharp_Image_Action
         public void GenerateThumbnail(ImageDescriptor id)
         {
             var fs = id.ThumbNailFile.OpenWrite();
+            var succes = ReSizeToBox(id,Thumbnail,fs);
         }
 
         public void ResizeImages(ImageDescriptor id)
@@ -72,10 +74,47 @@ namespace CSharp_Image_Action
             return false;
         }
 
-        protected Box ReSizeToBox(ImageDescriptor imageDescriptor, Box sizing, System.IO.FileStream outstream)
+        protected bool ReSizeToBox(ImageDescriptor imageDescriptor, Box sizing, System.IO.FileStream outstream)
         {
             System.IO.FileInfo fi = imageDescriptor.ImageFile;
-            return new Box();   
+            {
+                var inStream = fi.OpenRead();
+                using (Image image = Image.Load(inStream))
+                {
+                    int height = image.Height;
+                    int width = image.Width;
+
+                    double HeightWidthRatio = (double) height / (double) width;
+                    double targetratio = (double) sizing.Height / (double) sizing.Width;
+
+                    if(sizing.PreserveRatio && sizing.BiasForLongEdge )
+                    {
+                        if( HeightWidthRatio >= 1.0f ) // Height is greater than or equal to Width
+                        {
+                            image.Mutate(x => x.Resize( 0, sizing.Height, KnownResamplers.Lanczos3));
+                        }else if(HeightWidthRatio < 1.0f){ // Width is greater than height
+                            image.Mutate(x => x.Resize( sizing.Width, 0, KnownResamplers.Lanczos3));
+                        }
+
+                    }else if(sizing.PreserveRatio){                    
+                        
+                        if( targetratio >= 1.0f ) // Target Height is greater than or equal to Width
+                        {
+                            image.Mutate(x => x.Resize( 0, sizing.Height, KnownResamplers.Lanczos3));
+                        }else if(targetratio < 1.0f){ // Target Width is greater than height
+                            image.Mutate(x => x.Resize( sizing.Width, 0, KnownResamplers.Lanczos3));
+                        }
+
+                    }else{
+                        image.Mutate(x => x.Resize(sizing.Width,sizing.Height, KnownResamplers.Lanczos3));
+                    }
+                    image.Save(outstream, new PngEncoder());
+                    return true;
+                }
+            }
+            
+
+
         }
     }
 }

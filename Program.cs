@@ -44,9 +44,9 @@ namespace CSharp_Image_Action
             
             var ImagesList = ih.ImageList;
 
-            System.IO.DirectoryInfo thumbnaildi = new System.IO.DirectoryInfo(ImgDir + THUMBNAILS);
+            System.IO.DirectoryInfo thumbnail = new System.IO.DirectoryInfo(ImgDir + THUMBNAILS);
 
-            ImageResizer ir = new ImageResizer(thumbnaildi,256, 256, 1024, 1024, true, true);
+            ImageResizer ir = new ImageResizer(thumbnail,256, 256, 1024, 1024, true, true);
 
             foreach(ImageDescriptor id in ImagesList)
             {
