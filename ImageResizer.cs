@@ -55,7 +55,12 @@ namespace CSharp_Image_Action
         /// Image needs to be resized
         public bool NeedsResize(ImageDescriptor id)
         {
-            return true;
+            id.ReSizedFileName = StandardImage.Height + "x" + StandardImage.Width + "_" + id.Name;
+            id.ReSizedFileInfo = new System.IO.FileInfo(id.ReSizedFileName);
+            if(id.ReSizedFileInfo.Exists)
+                return false;
+            else
+                return true;
         }
 
         public void GenerateThumbnail(ImageDescriptor id)
@@ -66,18 +71,42 @@ namespace CSharp_Image_Action
 
         public void ResizeImages(ImageDescriptor id)
         {
-            //https://docs.sixlabors.com/articles/ImageSharp/Resize.html
+            var fs = id.ReSizedFileInfo.OpenWrite();
+
+            var succes = ReSizeToBox(id,StandardImage,fs);
         }
         
         protected bool IsCorrectResolution(ImageDescriptor id, Box sizing )
         {
-            return false;
+            var inStream = id.ImageFile.OpenRead();
+            bool retval = false;
+            using (Image image = Image.Load(inStream))
+            {
+                int height = image.Height;
+                int width = image.Width;
+
+                if(height == sizing.Height && width == sizing.Width)
+                {
+                    retval = true;
+                }else if(height > width && sizing.Height == height && sizing.BiasForLongEdge && sizing.PreserveRatio)
+                {
+                    retval = true;
+                }else if(height < width && sizing.Width == width && sizing.BiasForLongEdge && sizing.PreserveRatio)
+                {
+                    retval = true;
+                }else{
+                    //didn't finsih this logic
+                }
+            }
+            inStream.Close();
+            return retval;
         }
 
         protected bool ReSizeToBox(ImageDescriptor imageDescriptor, Box sizing, System.IO.FileStream outstream)
         {
             System.IO.FileInfo fi = imageDescriptor.ImageFile;
             {
+                //https://docs.sixlabors.com/articles/ImageSharp/Resize.html
                 var inStream = fi.OpenRead();
                 using (Image image = Image.Load(inStream))
                 {

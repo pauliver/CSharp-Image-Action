@@ -15,11 +15,16 @@ namespace CSharp_Image_Action
         public int ImageWidth { get => width; set => width = value; }
         public FileInfo ThumbNailFile { get => thumbNailFile; set => thumbNailFile = value; }
         public FileInfo ImageFile { get => file; }
+        public string ReSizedFileName { get => reSizedFileName; set => reSizedFileName = value; }
+        public FileInfo ReSizedFileInfo { get => reSizedFileInfo; set => reSizedFileInfo = value; }
+
         private string thumbnail_name;
         private string name;
         private string folder;
         private int height;
         private int width;
+        private string reSizedFileName;
+        private FileInfo reSizedFileInfo;
 
         protected DirectoryInfo directory;
         protected FileInfo file;
