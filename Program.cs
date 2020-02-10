@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -35,9 +37,9 @@ namespace CSharp_Image_Action
             }
 
             string[] extensionList = new string[]{".jpg",".png",".jpeg"};
-
+            DirectoryDescriptor DD = new DirectoryDescriptor(di.Name, di.FullName);
             // Traverse Image Directory
-            ImageHunter ih = new ImageHunter(di,extensionList);
+            ImageHunter ih = new ImageHunter(ref DD,di,extensionList);
 
             string v = ih.NumberImagesFound.ToString();
             Console.WriteLine(v + " Images Found") ;
@@ -45,6 +47,8 @@ namespace CSharp_Image_Action
             var ImagesList = ih.ImageList;
 
             System.IO.DirectoryInfo thumbnail = new System.IO.DirectoryInfo(ImgDir + THUMBNAILS);
+
+            Console.WriteLine("Images to be resized");
 
             ImageResizer ir = new ImageResizer(thumbnail,256, 256, 1024, 1024, true, true);
 
@@ -58,15 +62,40 @@ namespace CSharp_Image_Action
                 if(ir.NeedsResize(id)) // when our algorithm gets better, or or image sizes change
                     ir.ResizeImages(id);
             }
+            Console.WriteLine("Images have been resized");
 
+            
+            //https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-how-to
             // Generate 1 sets of json to save (1 deep tree?)
             // -> Gallery structure Gallery needs a thumbnail, and a name
             //   -> we probably need to generate a markdown page for it too... 
             //      -> Can hide more structure in the markdown page
 
-            //https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-how-to
-            //jsonString = JsonSerializer.Serialize(weatherForecast);
-            //File.WriteAllText(fileName, jsonString);
+            var encoderSettings = new TextEncoderSettings();
+            encoderSettings.AllowCharacters('\u0436', '\u0430');
+            encoderSettings.AllowRange(UnicodeRanges.BasicLatin);
+            var options = new JsonSerializerOptions
+            {
+                IgnoreReadOnlyProperties = false,
+                WriteIndented = true,
+                IgnoreNullValues = false,
+                //Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
+            };
+            var jsonString = JsonSerializer.Serialize<DirectoryDescriptor>(DD, options);
+
+            System.IO.FileInfo fi = new System.IO.FileInfo(Jekyll_data_Folder + "\\" + Jekyll_data_File);
+            {
+                var fs = fi.OpenWrite();
+                System.IO.TextWriter tw = new System.IO.StreamWriter(fs);
+                tw.Write(jsonString);
+                tw.Close();
+                //fs.Close();    
+            }
+            Console.WriteLine("Json written");
+
+            DD.SaveMDFiles();
+
+            Console.WriteLine("Image indexes written");
         }
     }
 }

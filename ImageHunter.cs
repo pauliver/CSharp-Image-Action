@@ -19,20 +19,22 @@ namespace CSharp_Image_Action
 
         protected string[] ValidImageExtensions;
 
-        public ImageHunter(System.IO.DirectoryInfo directory, System.String[] Extensions, int Max_Images = 32768, int Directory_Depth = 4)
+        public ImageHunter(ref DirectoryDescriptor dd, System.IO.DirectoryInfo directory, System.String[] Extensions, int Max_Images = 32768, int Directory_Depth = 4)
         {
             MaxDirectoryDepth = Directory_Depth;
             MaxImages = Max_Images;
             ValidImageExtensions = Extensions;
-            RecurseDirectory(directory,0);
+            RecurseDirectory(ref dd, directory,0);
         }
 
-        protected void MatchImages(System.IO.DirectoryInfo directory, System.IO.FileInfo fi)
+        protected void MatchImages(ref DirectoryDescriptor dd, System.IO.DirectoryInfo directory, System.IO.FileInfo fi)
         {
             ++ImagesFound;
-            object p = imageList.Add(new ImageDescriptor(directory,fi));
+            var p = new ImageDescriptor(directory,fi);
+            imageList.Add(p);
+            dd.Images.Add(p);
         }
-        protected void RecurseDirectory(System.IO.DirectoryInfo directory, int CurrentDepth)
+        protected void RecurseDirectory(ref DirectoryDescriptor dd, System.IO.DirectoryInfo directory, int CurrentDepth)
         {
             if(ImagesFound > MaxImages)
             {
@@ -48,7 +50,9 @@ namespace CSharp_Image_Action
                 // Get all the sub directories, and dive into them
                 foreach(System.IO.DirectoryInfo di in directory.GetDirectories())
                 {
-                    RecurseDirectory(di, CurrentDepth + 1);
+                    DirectoryDescriptor dd2 = new DirectoryDescriptor(di.Name,di.FullName);
+                    dd.Directories.Add(dd2);
+                    RecurseDirectory(ref dd2,di, CurrentDepth + 1);
                 }
             }
             foreach(System.IO.FileInfo fi in directory.GetFiles())
@@ -64,7 +68,7 @@ namespace CSharp_Image_Action
 
                 if(ValidExtension)
                 {
-                    MatchImages(directory,fi);
+                    MatchImages(ref dd, directory,fi);
                 }else{                
                     //would be good to log an "info" "filename" with "extension" invalid
                 }
