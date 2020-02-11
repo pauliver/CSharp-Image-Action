@@ -18,15 +18,15 @@ namespace CSharp_Image_Action
         {
             var ImgDir = args[0];
             var jsonPath = args[1] + "\\" + Jekyll_data_Folder + "\\" + Jekyll_data_File;
-            System.IO.DirectoryInfo di;
+            System.IO.DirectoryInfo ImagesDirectory;
             System.IO.FileInfo fi;
             if (ImgDir is string)
             {
-                di = new System.IO.DirectoryInfo(ImgDir);
+                ImagesDirectory = new System.IO.DirectoryInfo(ImgDir);
             }
             else if (ImgDir as String != null)
             {
-                di = new System.IO.DirectoryInfo(ImgDir as string);
+                ImagesDirectory = new System.IO.DirectoryInfo(ImgDir as string);
             }
             else
             {
@@ -50,17 +50,17 @@ namespace CSharp_Image_Action
             {
                 fi.Directory.Create();
             }
-
-            if (di.Exists == false) // VSCode keeps offering to "fix this" for me... 
+            if (ImagesDirectory.Exists == false) // VSCode keeps offering to "fix this" for me... 
             {
                 Console.WriteLine("Directory [" + ImgDir + "] Doesn't exist");
                 return;
             }
 
+
             string[] extensionList = new string[]{".jpg",".png",".jpeg"};
-            DirectoryDescriptor DD = new DirectoryDescriptor(di.Name, di.FullName);
+            DirectoryDescriptor DD = new DirectoryDescriptor(ImagesDirectory.Name, ImagesDirectory.FullName);
             // Traverse Image Directory
-            ImageHunter ih = new ImageHunter(ref DD,di,extensionList);
+            ImageHunter ih = new ImageHunter(ref DD,ImagesDirectory,extensionList);
 
             string v = ih.NumberImagesFound.ToString();
             Console.WriteLine(v + " Images Found") ;
@@ -68,6 +68,8 @@ namespace CSharp_Image_Action
             var ImagesList = ih.ImageList;
 
             System.IO.DirectoryInfo thumbnail = new System.IO.DirectoryInfo(ImgDir + THUMBNAILS);
+            if(!thumbnail.Exists)
+                thumbnail.Create();
 
             Console.WriteLine("Images to be resized");
 
