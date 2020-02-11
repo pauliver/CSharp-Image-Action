@@ -46,6 +46,10 @@ namespace CSharp_Image_Action
                 Console.WriteLine("Second Arg must be a file path");
                 return;
             }
+            if(!fi.Directory.Exists)
+            {
+                fi.Directory.Create();
+            }
 
             if (di.Exists == false) // VSCode keeps offering to "fix this" for me... 
             {
