@@ -45,7 +45,7 @@ namespace CSharp_Image_Action
         /// Thumbnail doesn't exists (we currently don't handle a thumbnail of the wrong size)
         public bool ThumbnailNeeded(ImageDescriptor id)
         {
-            id.ThumbNailFile = new System.IO.FileInfo(ThumbNailDirectory.FullName + id.ThumbnailName);
+            id.ThumbNailFile = new System.IO.FileInfo(ThumbNailDirectory.FullName + "\\" + id.ThumbnailName);
             if(id.ThumbNailFile.Exists)
                 return false;
             else
