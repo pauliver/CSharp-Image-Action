@@ -83,16 +83,26 @@ namespace CSharp_Image_Action
     [Serializable()]
     public class ImageDescriptor
     {
-        private System.IO.FileInfo thumbNailFile;
+
+        [JsonIgnore]
+        public FileInfo ThumbNailFile { get => thumbNailFile; set => thumbNailFile = value; }
+        [JsonIgnore]
+        public FileInfo ImageFile { get => file; }
+        [JsonIgnore]
+        public FileInfo ReSizedFileInfo { get => reSizedFileInfo; set => reSizedFileInfo = value; }
         public string Name { get => name; set => name = value; }
         public string ThumbnailName { get => thumbnail_name; set => thumbnail_name = value; }
         public string ReSizedFileName { get => reSizedFileName; set => reSizedFileName = value; }
         public string Folder { get => folder; set => folder = value; }
         public int ImageHeight { get => height; set => height = value; }
         public int ImageWidth { get => width; set => width = value; }
-        public FileInfo ThumbNailFile { get => thumbNailFile; set => thumbNailFile = value; }
-        public FileInfo ImageFile { get => file; }
-        public FileInfo ReSizedFileInfo { get => reSizedFileInfo; set => reSizedFileInfo = value; }
+
+        [JsonPropertyName("OriginalFilePath")]
+        public string JSON_ImageFIle { get => ImageFile.FullName;}
+        [JsonPropertyName("ThumbnailFilePath")]
+        public string JSON_ThumbnailFile { get => thumbNailFile.FullName;}
+        [JsonPropertyName("ResizedFilePath")]
+        public string JSON_ResizedImage { get => ReSizedFileInfo.FullName;}
 
         private string thumbnail_name;
         private string name;
@@ -100,10 +110,11 @@ namespace CSharp_Image_Action
         private int height;
         private int width;
         private string reSizedFileName;
-        private FileInfo reSizedFileInfo;
+        protected FileInfo reSizedFileInfo;      
+        protected FileInfo file;  
+        protected System.IO.FileInfo thumbNailFile;
 
         protected DirectoryInfo directory;
-        protected FileInfo file;
         public ImageDescriptor(System.IO.DirectoryInfo di, System.IO.FileInfo fi)
         {
             directory = di;
