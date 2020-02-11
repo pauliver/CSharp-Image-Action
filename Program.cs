@@ -12,6 +12,8 @@ namespace CSharp_Image_Action
         public static string Jekyll_data_File = "images.json";
         public static string THUMBNAILS = "\\Thumbnails";
 
+        public static string GENERATED = "\\Generated"
+
         static void Main(string[] args)
         {
             var ImgDir = args[0];
@@ -100,7 +102,7 @@ namespace CSharp_Image_Action
             };
             var jsonString = JsonSerializer.Serialize<DirectoryDescriptor>(DD, options);
             {
-                var fs = fi.OpenWrite();
+                var fs = fi.Create();
                 System.IO.TextWriter tw = new System.IO.StreamWriter(fs);
                 tw.Write(jsonString);
                 tw.Close();
