@@ -12,6 +12,7 @@ Working on an Action to resize images, make thumbnails, etc.. using .net core 3.
 >     paths:
 >       - '**.jpg'
 >       - '**.png'
+>       - '**.jpeg'
 >       - '**.webp'
 > 
 > jobs:
