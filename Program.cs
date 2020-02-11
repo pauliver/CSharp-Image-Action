@@ -15,7 +15,9 @@ namespace CSharp_Image_Action
         static void Main(string[] args)
         {
             var ImgDir = args[0];
+            var jsonPath = args[1] + "\\" + Jekyll_data_Folder + "\\" + Jekyll_data_File;
             System.IO.DirectoryInfo di;
+            System.IO.FileInfo fi;
             if (ImgDir is string)
             {
                 di = new System.IO.DirectoryInfo(ImgDir);
@@ -27,6 +29,19 @@ namespace CSharp_Image_Action
             else
             {
                 Console.WriteLine("First Arg must be a directory");
+                return;
+            }
+            if (jsonPath is string)
+            {
+                fi = new System.IO.FileInfo(jsonPath);
+            }
+            else if (jsonPath as String != null)
+            {
+                fi = new System.IO.FileInfo(jsonPath as string);
+            }
+            else
+            {
+                Console.WriteLine("Second Arg must be a file path");
                 return;
             }
 
@@ -84,8 +99,6 @@ namespace CSharp_Image_Action
                 //Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
             };
             var jsonString = JsonSerializer.Serialize<DirectoryDescriptor>(DD, options);
-
-            System.IO.FileInfo fi = new System.IO.FileInfo(Jekyll_data_Folder + "\\" + Jekyll_data_File);
             {
                 var fs = fi.OpenWrite();
                 System.IO.TextWriter tw = new System.IO.StreamWriter(fs);
