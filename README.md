@@ -3,6 +3,7 @@ Working on an Action to resize images, make thumbnails, etc.. using .net core 3.
 
 ![.NET Core](https://github.com/pauliver/CSharp-Image-Action/workflows/.NET%20Core/badge.svg)
 
+*no idea how i'm suposed to embed a copy/pasteable .yml file using markdown...*
 
 > name: Create Thumbnails and compressed images
 > on:
@@ -10,10 +11,10 @@ Working on an Action to resize images, make thumbnails, etc.. using .net core 3.
 >     branches: master
 >   pull_request:
 >     paths:
->       - '**.jpg'
->       - '**.png'
->       - '**.jpeg'
->       - '**.webp'
+>       - '\*\*.jpg'
+>       - '\*\*.png'
+>       - '\*\*.jpeg'
+>       - '\*\*.webp'
 > 
 > jobs:
 >   build:
