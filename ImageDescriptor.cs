@@ -42,7 +42,7 @@ namespace CSharp_Image_Action
             {
                 dd.SaveMDFiles();
             }
-            System.IO.FileInfo fi = new FileInfo(this.fullPath + "\\" + directoryName + "Index.md");
+            System.IO.FileInfo fi = new FileInfo(this.fullPath + "\\" + "Index.md");
             
             //we need to overwrite them even if they exist (but we need some fortmat to allow edits)
             {
@@ -69,6 +69,8 @@ namespace CSharp_Image_Action
                 WriteDirectory(tw,d);
             }
             tw.WriteLine("----");
+            tw.Flush();
+            tw.Close();
         }
 
         public void WriteImage(System.IO.TextWriter textWriter, ImageDescriptor id)
