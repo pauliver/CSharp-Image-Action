@@ -66,14 +66,22 @@ namespace CSharp_Image_Action
         public void GenerateThumbnail(ImageDescriptor id)
         {
             var fs = id.ThumbNailFile.OpenWrite();
-            var succes = ReSizeToBox(id,Thumbnail,fs);
+            var success = ReSizeToBox(id,Thumbnail,fs);
+            if(success)  
+                System.Console.WriteLine("Thumbnail Generated");
+            else
+                System.Console.WriteLine("Thumbnail generation failed");
         }
 
         public void ResizeImages(ImageDescriptor id)
         {
             var fs = id.ReSizedFileInfo.OpenWrite();
 
-            var succes = ReSizeToBox(id,StandardImage,fs);
+            var success = ReSizeToBox(id,StandardImage,fs);
+            if(success)  
+                System.Console.WriteLine("Image Resized");
+            else
+                System.Console.WriteLine("Image Resize Failed");
         }
         
         protected bool IsCorrectResolution(ImageDescriptor id, Box sizing )
@@ -95,6 +103,7 @@ namespace CSharp_Image_Action
                 {
                     retval = true;
                 }else{
+                    System.Console.WriteLine("that else you never wrote, yeah.. you hit it");
                     //didn't finsih this logic
                 }
             }

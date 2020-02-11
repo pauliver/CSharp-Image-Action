@@ -38,14 +38,13 @@ namespace CSharp_Image_Action
         {
             if(ImagesFound > MaxImages)
             {
-                //would be good to log an error
+                System.Console.WriteLine("//would be good to log an error");
                 return;
             }    
 
             if(CurrentDepth == MaxDirectoryDepth)
             {
-                //would be good to log an error
-                
+                System.Console.WriteLine("//would be good to log an error");
             }else{
                 // Get all the sub directories, and dive into them
                 foreach(System.IO.DirectoryInfo di in directory.GetDirectories())
@@ -69,8 +68,8 @@ namespace CSharp_Image_Action
                 if(ValidExtension)
                 {
                     MatchImages(ref dd, directory,fi);
-                }else{                
-                    //would be good to log an "info" "filename" with "extension" invalid
+                }else{
+                    System.Console.WriteLine("Info: " + fi.Name  + " with " + fi.Extension + " invalid");              
                 }
             }
         }
