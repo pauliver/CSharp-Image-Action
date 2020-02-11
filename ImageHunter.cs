@@ -29,6 +29,12 @@ namespace CSharp_Image_Action
 
         protected void MatchImages(ref DirectoryDescriptor dd, System.IO.DirectoryInfo directory, System.IO.FileInfo fi)
         {
+            if(fi.Name.StartsWith(ImageDescriptor.thumbnail) || fi.Name.StartsWith(ImageDescriptor.resized))
+            {
+                System.Console.WriteLine("Not Adding " + fi.Name + " to file list");
+                return;
+            }
+
             ++ImagesFound;
             var p = new ImageDescriptor(directory,fi);
             imageList.Add(p);

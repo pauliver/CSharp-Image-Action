@@ -12,7 +12,7 @@ namespace CSharp_Image_Action
         public static string Jekyll_data_File = "images.json";
         public static string THUMBNAILS = "\\Thumbnails";
 
-        public static string GENERATED = "\\Generated"
+        public static string GENERATED = "\\Generated";
 
         static void Main(string[] args)
         {

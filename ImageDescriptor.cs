@@ -84,7 +84,8 @@ namespace CSharp_Image_Action
     [Serializable()]
     public class ImageDescriptor
     {
-
+        public static string thumbnail = "thumbnail";
+        public static string resized = "resized";
         [JsonIgnore]
         public FileInfo ThumbNailFile { get => thumbNailFile; set => thumbNailFile = value; }
         [JsonIgnore]
@@ -126,7 +127,7 @@ namespace CSharp_Image_Action
 
         public void FillBasicInfo()
         {
-            thumbnail_name = directory.Name + "_" + file.Name;
+            thumbnail_name = ImageDescriptor.thumbnail + "_" + directory.Name + "_" + file.Name;
             
             {
                 var inStream = file.OpenRead();
