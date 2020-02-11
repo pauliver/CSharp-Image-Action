@@ -114,7 +114,7 @@ namespace CSharp_Image_Action
 
         public void FillBasicInfo()
         {
-            thumbnail_name = directory.Name + "_" + file.Name + "_" + file.CreationTimeUtc.ToString();
+            thumbnail_name = directory.Name + "_" + file.Name;
             
             {
                 var inStream = file.OpenRead();
