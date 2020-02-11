@@ -63,11 +63,14 @@ namespace CSharp_Image_Action
             {
                 WriteImage(tw,i);
             }
+            tw.WriteLine();
             tw.WriteLine("----");
+            tw.WriteLine();
             foreach(DirectoryDescriptor d in Directories)
             {
                 WriteDirectory(tw,d);
             }
+            tw.WriteLine();
             tw.WriteLine("----");
             tw.Flush();
             tw.Close();
@@ -75,11 +78,12 @@ namespace CSharp_Image_Action
 
         public void WriteImage(System.IO.TextWriter textWriter, ImageDescriptor id)
         {
-            textWriter.Write("[![" + id.Name  + "](" + id.ThumbNailFile + ")](" + id.ReSizedFileName + ")");
+            textWriter.WriteLine("[ ![" + id.Name  + "](" + id.ThumbNailFile.Name + ") ](" + id.ReSizedFileInfo.Name + ")" );
         }
         public void WriteDirectory(System.IO.TextWriter textWriter, DirectoryDescriptor dd)
         {
-            textWriter.Write("[" + dd.DirectoryName + "](" + dd.fullPath + ")");
+            textWriter.WriteLine("[" + dd.DirectoryName + "]( .//"+ dd.DirectoryName + "/Index.md )");
+            textWriter.WriteLine();
         }
     }
 
