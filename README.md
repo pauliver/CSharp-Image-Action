@@ -6,9 +6,11 @@ Working on an Action to resize images, make thumbnails, etc.. using .net core 3.
 *no idea how i'm suposed to embed a copy/pasteable .yml file using markdown...*
 
 > name: Create Thumbnails and compressed images
+>
 > on:
 >   push:
 >     branches: master
+>
 >   pull_request:
 >     paths:
 >       - '\*\*.jpg'
