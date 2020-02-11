@@ -47,6 +47,7 @@ namespace CSharp_Image_Action
             //we need to overwrite them even if they exist (but we need some fortmat to allow edits)
             {
                 CreateIndexFile(fi);
+                System.Console.WriteLine("Create : " + fi.FullName);
             }
         }
 
