@@ -17,7 +17,7 @@ namespace CSharp_Image_Action
     {
         [JsonPropertyName("Images")]
         public List<ImageDescriptor> Images { get => images; set => images = value; }
-        [JsonPropertyName("SubDirectories"),JsonExtensionData]
+        [JsonPropertyName("SubDirectories")] //JsonExtensionData
         public List<DirectoryDescriptor> Directories { get => directories; set => directories = value; }
         [JsonPropertyName("DirectoryName")]
         public string DirectoryName { get => directoryName; set => directoryName = value; }
