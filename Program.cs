@@ -66,7 +66,7 @@ namespace CSharp_Image_Action
 
             
             DD.SaveMDFiles();
-            
+            Console.WriteLine("Image indexes written");
             //https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-how-to
             // Generate 1 sets of json to save (1 deep tree?)
             // -> Gallery structure Gallery needs a thumbnail, and a name
@@ -94,9 +94,6 @@ namespace CSharp_Image_Action
                 //fs.Close();    
             }
             Console.WriteLine("Json written");
-
-
-            Console.WriteLine("Image indexes written");
         }
     }
 }
