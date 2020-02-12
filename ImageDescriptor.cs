@@ -49,22 +49,22 @@ namespace CSharp_Image_Action
                 i.FixUpPaths(di);
             }
         }
-        public void SaveMDFiles()
+        public void SaveMDFiles(string Domain)
         {
             foreach(DirectoryDescriptor dd in directories)
             {
-                dd.SaveMDFiles();
+                dd.SaveMDFiles(Domain);
             }
             System.IO.FileInfo fi = new FileInfo(this.fullPath + "\\" + "Index.md");
             
             //we need to overwrite them even if they exist (but we need some fortmat to allow edits)
             {
-                CreateIndexFile(fi);
+                CreateIndexFile(fi, Domain);
                 System.Console.WriteLine("Create : " + fi.FullName);
             }
         }
 
-        public void CreateIndexFile(System.IO.FileInfo fi)
+        public void CreateIndexFile(System.IO.FileInfo fi, string Domain)
         {
             System.IO.FileStream fs = fi.OpenWrite();
             System.IO.TextWriter tw = new System.IO.StreamWriter(fs);
@@ -74,7 +74,7 @@ namespace CSharp_Image_Action
             tw.WriteLine("----");
             foreach(ImageDescriptor i in images)
             {
-                WriteImage(tw,i);
+                WriteImage(tw,i, Domain);
             }
             tw.WriteLine();
             tw.WriteLine("----");
@@ -89,9 +89,9 @@ namespace CSharp_Image_Action
             tw.Close();
         }
 
-        public void WriteImage(System.IO.TextWriter textWriter, ImageDescriptor id)
+        public void WriteImage(System.IO.TextWriter textWriter, ImageDescriptor id, string Domain)
         {
-            textWriter.WriteLine("[![" + id.Name  + "](" + id.ThumbNailFile.FullName.Replace(GitHubRepoRoot.FullName,"") + ")](" + id.ReSizedFileInfo.Name + ")" );
+            textWriter.WriteLine("[![" + id.Name  + "](" + Domain + id.ThumbNailFile.FullName.Replace(GitHubRepoRoot.FullName,"") + ")](" + id.ReSizedFileInfo.Name + ")" );
         }
         public void WriteDirectory(System.IO.TextWriter textWriter, DirectoryDescriptor dd)
         {

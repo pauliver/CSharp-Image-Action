@@ -10,8 +10,7 @@ namespace CSharp_Image_Action
     {
         public static string Jekyll_data_Folder = "_data";
         public static string Jekyll_data_File = "images.json";
-        public static string THUMBNAILS = "\\Thumbnails";
-
+        public static string THUMBNAILS = "Thumbnails";
         public static string GENERATED = "\\Generated";
 
         static void Main(string[] args)
@@ -19,6 +18,7 @@ namespace CSharp_Image_Action
             var ImgDir = args[0];
             var jsonPath = args[1] + "\\" + Jekyll_data_Folder + "\\" + Jekyll_data_File;
             var repopath = args[1];
+            var domain = args[2];
             System.IO.DirectoryInfo ImagesDirectory;
             System.IO.DirectoryInfo RepoDirectory; 
             System.IO.FileInfo fi;
@@ -66,6 +66,11 @@ namespace CSharp_Image_Action
                 return;
             }
 
+            if(!(domain is string))
+            {
+                Console.WriteLine("arg 3 needs to be your domain");
+            }
+
 
             string[] extensionList = new string[]{".jpg",".png",".jpeg"};
             DirectoryDescriptor DD = new DirectoryDescriptor(ImagesDirectory.Name, ImagesDirectory.FullName);
@@ -77,7 +82,7 @@ namespace CSharp_Image_Action
             
             var ImagesList = ih.ImageList;
 
-            System.IO.DirectoryInfo thumbnail = new System.IO.DirectoryInfo(ImgDir + THUMBNAILS);
+            System.IO.DirectoryInfo thumbnail = new System.IO.DirectoryInfo(ImgDir + "\\" + THUMBNAILS);
             if(!thumbnail.Exists)
                 thumbnail.Create();
 
@@ -101,7 +106,7 @@ namespace CSharp_Image_Action
             Console.WriteLine("fixing up paths");
             DD.FixUpPaths(RepoDirectory);
             
-            DD.SaveMDFiles();
+            DD.SaveMDFiles(domain);
             Console.WriteLine("Image indexes written");
             //https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-how-to
             // Generate 1 sets of json to save (1 deep tree?)

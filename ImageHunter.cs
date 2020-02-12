@@ -55,9 +55,12 @@ namespace CSharp_Image_Action
                 // Get all the sub directories, and dive into them
                 foreach(System.IO.DirectoryInfo di in directory.GetDirectories())
                 {
-                    DirectoryDescriptor dd2 = new DirectoryDescriptor(di.Name,di.FullName);
-                    dd.Directories.Add(dd2);
-                    RecurseDirectory(ref dd2,di, CurrentDepth + 1);
+                    if(di.Name != Program.THUMBNAILS)
+                        {
+                        DirectoryDescriptor dd2 = new DirectoryDescriptor(di.Name,di.FullName);
+                        dd.Directories.Add(dd2);
+                        RecurseDirectory(ref dd2,di, CurrentDepth + 1);
+                    }
                 }
             }
             foreach(System.IO.FileInfo fi in directory.GetFiles())
