@@ -76,13 +76,13 @@ namespace CSharp_Image_Action
             }
             //we need to overwrite them even if they exist (but we need some fortmat to allow edits)
             {
-                CreateIndexFile(indexfilename, Domain);
+                CreateIndexFile(indexfilename, Domain, ImagesDirectory);
                 System.Console.WriteLine("Create : " + indexfilename.FullName);
             }
         }
 
 
-        public void CreateIndexFile(System.IO.FileInfo fi, string Domain)
+        public void CreateIndexFile(System.IO.FileInfo fi, string Domain, System.IO.DirectoryInfo ImagesDirectory)
         {
             System.IO.TextWriter tw = fi.CreateText();
 
@@ -91,7 +91,7 @@ namespace CSharp_Image_Action
             tw.WriteLine("----");
             foreach(ImageDescriptor i in images)
             {
-                WriteImage(tw,i, Domain);
+                WriteImage(tw, i, Domain, ImagesDirectory);
             }
             tw.WriteLine();
             tw.WriteLine("----");
@@ -106,9 +106,9 @@ namespace CSharp_Image_Action
             tw.Close();
         }
 
-        public void WriteImage(System.IO.TextWriter textWriter, ImageDescriptor id, string Domain)
+        public void WriteImage(System.IO.TextWriter textWriter, ImageDescriptor id, string Domain, System.IO.DirectoryInfo ImagesDirectory)
         {
-            textWriter.WriteLine("[![" + id.Name  + "](" + Domain + "/" + id.ThumbNailFile.FullName.Replace(GitHubRepoRoot.FullName,"").Replace(@"\","/") + ")](" + id.ReSizedFileInfo.Name + ")" );
+            textWriter.WriteLine("[![" + id.Name  + "](" + Domain + "/" + id.ThumbNailFile.FullName.Replace(GitHubRepoRoot.FullName,"").Replace(@"\","/") + ")](" + id.ReSizedFileInfo.FullName.Replace(ImagesDirectory.FullName,"").Replace(@"\","/") + ")" );
         }
         public void WriteDirectory(System.IO.TextWriter textWriter, DirectoryDescriptor dd)
         {
