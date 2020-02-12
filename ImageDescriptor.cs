@@ -95,7 +95,7 @@ namespace CSharp_Image_Action
         }
         public void WriteDirectory(System.IO.TextWriter textWriter, DirectoryDescriptor dd)
         {
-            textWriter.WriteLine("[" + dd.DirectoryName + "]( .//"+ dd.DirectoryName + "/Index.md )");
+            textWriter.WriteLine("[" + dd.DirectoryName + "]( ./"+ dd.DirectoryName + "/Index.md )");
             textWriter.WriteLine();
         }
     }
@@ -165,8 +165,8 @@ namespace CSharp_Image_Action
 
         public void FillBasicInfo()
         {
-            thumbnail_name = ImageDescriptor.thumbnail + "_" + directory.Name + "_" + file.Name;
-            ReSizedFileName = Folder + "\\" +  ImageDescriptor.resized  + "_" + Name;
+            thumbnail_name = ImageDescriptor.thumbnail + "-" + directory.Name + "-" + file.Name;
+            ReSizedFileName = Folder + "\\" +  ImageDescriptor.resized  + "-" + Name;
             {
                 var inStream = file.OpenRead();
                 using (Image image = Image.Load(inStream))
