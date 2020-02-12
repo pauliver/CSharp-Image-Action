@@ -9,7 +9,7 @@ namespace CSharp_Image_Action
     class Program
     {
         public static string Jekyll_data_Folder = "_data";
-        public static string Jekyll_data_File = "images.json";
+        public static string Jekyll_data_File = "galleryjson.json";
         public static string THUMBNAILS = "Thumbnails";
         public static string GENERATED = "\\Generated";
 
