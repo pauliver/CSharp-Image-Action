@@ -48,7 +48,7 @@ Working on an Action to resize images, make thumbnails, etc.. using .net core 3.
 >         run: dotnet build ImgTools/ --configuration Release
 >       
 >       - name: Run the Image Tools
->         run: dotnet <hardcode path to compiled ImagTools repo>  <hardcode path main repo>\<folder with images>\  <hardcode path main repo> 
+>         run: dotnet <hardcode path to compiled ImagTools repo>  <hardcode path main repo>\<folder with images>\  <hardcode path main repo> <domain>
 > 
 >       - name: Commit files
 >         run: |
