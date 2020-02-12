@@ -91,7 +91,7 @@ namespace CSharp_Image_Action
 
         public void WriteImage(System.IO.TextWriter textWriter, ImageDescriptor id)
         {
-            textWriter.WriteLine("[ ![" + id.Name  + "](" + id.ThumbNailFile.FullName.Replace(GitHubRepoRoot.FullName,"") + ") ](" + id.ReSizedFileInfo.Name + ")" );
+            textWriter.WriteLine("[![" + id.Name  + "](" + id.ThumbnailName + ")](" + id.ReSizedFileInfo.Name + ")" );
         }
         public void WriteDirectory(System.IO.TextWriter textWriter, DirectoryDescriptor dd)
         {
