@@ -90,7 +90,7 @@ namespace CSharp_Image_Action
 
         public void WriteImage(System.IO.TextWriter textWriter, ImageDescriptor id, string Domain)
         {
-            textWriter.WriteLine("[![" + id.Name  + "](" + Domain + id.ThumbNailFile.FullName.Replace(GitHubRepoRoot.FullName,"") + ")](" + id.ReSizedFileInfo.Name + ")" );
+            textWriter.WriteLine("[![" + id.Name  + "](" + Domain + "/" +id.ThumbNailFile.FullName.Replace(GitHubRepoRoot.FullName,"").Replace(@"\","/") + ")](" + id.ReSizedFileInfo.Name + ")" );
         }
         public void WriteDirectory(System.IO.TextWriter textWriter, DirectoryDescriptor dd)
         {
