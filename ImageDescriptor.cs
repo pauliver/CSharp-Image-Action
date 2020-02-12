@@ -20,11 +20,11 @@ namespace CSharp_Image_Action
         public string GalleryName { get => directoryName; }
         
         [JsonPropertyName("DirectoryName")]
-        public string DirectoryName { get => directoryName; }
+        public string DirectoryName { get => "/" + directoryName; }
         protected string directoryName;
         
         [JsonPropertyName("FullDirectoryPath")]
-        public string FullPath { get => fullPath.Replace(GitHubRepoRoot.FullName,""); }
+        public string FullPath { get => "/" + fullPath.Replace(GitHubRepoRoot.FullName,"").Replace("\\","/"); }
         private string fullPath;
         
         [JsonPropertyName("PhotoGalleries")] //JsonExtensionData
@@ -139,6 +139,7 @@ namespace CSharp_Image_Action
         public string JSON_ThumbnailFile { get => thumbNailFile.FullName.Replace(GitHubRepoRoot.FullName,"");}
 
         protected FileInfo reSizedFileInfo; 
+        [JsonIgnore]
         public string ReSizedFileName { get => reSizedFileName; set => reSizedFileName = value; }
         private string reSizedFileName;
         [JsonIgnore]
@@ -157,7 +158,7 @@ namespace CSharp_Image_Action
             folder = di.FullName;
 
             thumbnail_name = ImageDescriptor.thumbnail + "-" + directory.Name + "-" + file.Name;
-            ReSizedFileName = Folder + "\\" +  ImageDescriptor.resized  + "-" + Name;
+            ReSizedFileName = folder + "\\" +  ImageDescriptor.resized  + "-" + name;
         }
 
         public void FillBasicInfo()
@@ -175,9 +176,9 @@ namespace CSharp_Image_Action
         {
             this.GitHubRepoRoot = di;
 
-            thumbnail_name = thumbnail_name.Replace(GitHubRepoRoot.FullName,"");
-            ReSizedFileName = ReSizedFileName.Replace(GitHubRepoRoot.FullName,"");
-            folder = folder.Replace(GitHubRepoRoot.FullName,"");
+            thumbnail_name = "/" + thumbnail_name.Replace(GitHubRepoRoot.FullName,"").Replace("\\","/");
+            ReSizedFileName = "/" + ReSizedFileName.Replace(GitHubRepoRoot.FullName,"").Replace("\\","/");
+            folder = "/" + folder.Replace(GitHubRepoRoot.FullName,"").Replace("\\","/");
         }
     }
 }
