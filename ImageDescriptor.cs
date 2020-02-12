@@ -66,8 +66,7 @@ namespace CSharp_Image_Action
 
         public void CreateIndexFile(System.IO.FileInfo fi, string Domain)
         {
-            System.IO.FileStream fs = fi.OpenWrite();
-            System.IO.TextWriter tw = new System.IO.StreamWriter(fs);
+            System.IO.TextWriter tw = fi.CreateText();
 
             tw.WriteLine("# " + this.directoryName);
             tw.WriteLine();
