@@ -55,7 +55,6 @@ namespace CSharp_Image_Action
         /// Image needs to be resized
         public bool NeedsResize(ImageDescriptor id)
         {
-            id.ReSizedFileName = id.Folder + "\\" +  ImageDescriptor.resized  + "_" + StandardImage.Height + "x" + StandardImage.Width + "_" + id.Name;
             id.ReSizedFileInfo = new System.IO.FileInfo(id.ReSizedFileName);
             if(id.ReSizedFileInfo.Exists)
                 return false;

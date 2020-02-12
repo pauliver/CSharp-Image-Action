@@ -18,8 +18,18 @@ namespace CSharp_Image_Action
         {
             var ImgDir = args[0];
             var jsonPath = args[1] + "\\" + Jekyll_data_Folder + "\\" + Jekyll_data_File;
+            var repopath = args[1];
             System.IO.DirectoryInfo ImagesDirectory;
+            System.IO.DirectoryInfo RepoDirectory; 
             System.IO.FileInfo fi;
+            if(repopath is string || repopath as string != null)
+            {
+                RepoDirectory = new System.IO.DirectoryInfo(repopath as string);
+            }
+            else{
+                Console.WriteLine("Second Arg must be a directory");
+                return;
+            }
             if (ImgDir is string)
             {
                 ImagesDirectory = new System.IO.DirectoryInfo(ImgDir);
@@ -43,7 +53,7 @@ namespace CSharp_Image_Action
             }
             else
             {
-                Console.WriteLine("Second Arg must be a file path");
+                Console.WriteLine("Second Arg must be a directory that can lead to " + "\\" + Jekyll_data_Folder + "\\" + Jekyll_data_File);
                 return;
             }
             if(!fi.Directory.Exists)
@@ -84,9 +94,12 @@ namespace CSharp_Image_Action
 
                 if(ir.NeedsResize(id)) // when our algorithm gets better, or or image sizes change
                     ir.ResizeImages(id);
+
             }
             Console.WriteLine("Images have been resized");
 
+            Console.WriteLine("fixing up paths");
+            DD.FixUpPaths(RepoDirectory);
             
             DD.SaveMDFiles();
             Console.WriteLine("Image indexes written");

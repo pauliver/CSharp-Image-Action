@@ -29,6 +29,7 @@ namespace CSharp_Image_Action
         protected string directoryName;
         private string fullPath;
 
+        private DirectoryInfo GitHubRepoRoot;
 
         public DirectoryDescriptor(string directoryname, string fullpath)
         {
@@ -36,6 +37,18 @@ namespace CSharp_Image_Action
             this.fullPath = fullpath;
         }
 
+        public void FixUpPaths(DirectoryInfo di)
+        {
+            GitHubRepoRoot = di;
+            foreach(DirectoryDescriptor dd in directories)
+            { 
+                dd.FixUpPaths(di);
+            }
+            foreach(ImageDescriptor i in images)
+            {
+                i.FixUpPaths(di);
+            }
+        }
         public void SaveMDFiles()
         {
             foreach(DirectoryDescriptor dd in directories)
@@ -90,39 +103,58 @@ namespace CSharp_Image_Action
     [Serializable()]
     public class ImageDescriptor
     {
+        # region Static
         public static string thumbnail = "thumbnail";
         public static string resized = "resized";
-        [JsonIgnore]
-        public FileInfo ThumbNailFile { get => thumbNailFile; set => thumbNailFile = value; }
-        [JsonIgnore]
-        public FileInfo ImageFile { get => file; }
-        [JsonIgnore]
-        public FileInfo ReSizedFileInfo { get => reSizedFileInfo; set => reSizedFileInfo = value; }
-        public string Name { get => name; set => name = value; }
-        public string ThumbnailName { get => thumbnail_name; set => thumbnail_name = value; }
-        public string ReSizedFileName { get => reSizedFileName; set => reSizedFileName = value; }
-        public string Folder { get => folder; set => folder = value; }
-        public int ImageHeight { get => height; set => height = value; }
-        public int ImageWidth { get => width; set => width = value; }
-
-        [JsonPropertyName("OriginalFilePath")]
-        public string JSON_ImageFIle { get => ImageFile.FullName;}
-        [JsonPropertyName("ThumbnailFilePath")]
-        public string JSON_ThumbnailFile { get => thumbNailFile.FullName;}
-        [JsonPropertyName("ResizedFilePath")]
-        public string JSON_ResizedImage { get => ReSizedFileInfo.FullName;}
+        
+        #endregion
 
         private string thumbnail_name;
-        private string name;
-        private string folder;
-        private int height;
-        private int width;
-        private string reSizedFileName;
-        protected FileInfo reSizedFileInfo;      
-        protected FileInfo file;  
         protected System.IO.FileInfo thumbNailFile;
+        public string ThumbnailName { get => thumbnail_name; set => thumbnail_name = value; }
+        [JsonIgnore]
+        public FileInfo ThumbNailFile { get => thumbNailFile; set => thumbNailFile = value; }
+        [JsonPropertyName("ThumbnailFilePath")]
+        public string JSON_ThumbnailFile { get => thumbNailFile.FullName.Replace(GitHubRepoRoot.FullName,"");}
+
+
+        protected FileInfo file;  
+        private string name;
+        public string Name { get => name; set => name = value; }
+        [JsonIgnore]
+        public FileInfo ImageFile { get => file; }
+        [JsonPropertyName("OriginalFilePath")]
+        public string JSON_ImageFIle { get => file.FullName.Replace(GitHubRepoRoot.FullName,"");}
+              
+
+
+        protected FileInfo reSizedFileInfo; 
+        public string ReSizedFileName { get => reSizedFileName; set => reSizedFileName = value; }
+        private string reSizedFileName;
+        [JsonIgnore]
+        public FileInfo ReSizedFileInfo { get => reSizedFileInfo; set => reSizedFileInfo = value; }
+         [JsonPropertyName("ResizedFilePath")]
+        public string JSON_ResizedImage { get => reSizedFileInfo.FullName.Replace(GitHubRepoRoot.FullName,"");}
+
+        
+        
+        private string folder;
+        public string Folder { get => folder; set => folder = value; }
+
+        
+        private int height;
+        public int ImageHeight { get => height; set => height = value; }
+
+        
+        private int width;
+        public int ImageWidth { get => width; set => width = value; }
+
+
+
 
         protected DirectoryInfo directory;
+        private DirectoryInfo GitHubRepoRoot;
+
         public ImageDescriptor(System.IO.DirectoryInfo di, System.IO.FileInfo fi)
         {
             directory = di;
@@ -134,7 +166,7 @@ namespace CSharp_Image_Action
         public void FillBasicInfo()
         {
             thumbnail_name = ImageDescriptor.thumbnail + "_" + directory.Name + "_" + file.Name;
-            
+            ReSizedFileName = Folder + "\\" +  ImageDescriptor.resized  + "_" + Name;
             {
                 var inStream = file.OpenRead();
                 using (Image image = Image.Load(inStream))
@@ -144,6 +176,15 @@ namespace CSharp_Image_Action
                 }
                 inStream.Close();
             }
+        }
+
+        public void FixUpPaths(System.IO.DirectoryInfo di)
+        {
+            this.GitHubRepoRoot = di;
+
+            thumbnail_name = thumbnail_name.Replace(GitHubRepoRoot.FullName,"");
+            ReSizedFileName = ReSizedFileName.Replace(GitHubRepoRoot.FullName,"");
+            folder = folder.Replace(GitHubRepoRoot.FullName,"");
         }
     }
 }
