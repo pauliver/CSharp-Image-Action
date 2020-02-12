@@ -106,7 +106,7 @@ namespace CSharp_Image_Action
             Console.WriteLine("fixing up paths");
             DD.FixUpPaths(RepoDirectory);
             
-            DD.SaveMDFiles(domain);
+            DD.SaveMDFiles(domain, ImagesDirectory);
             Console.WriteLine("Image indexes written");
             //https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-how-to
             // Generate 1 sets of json to save (1 deep tree?)
