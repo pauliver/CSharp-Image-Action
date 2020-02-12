@@ -27,6 +27,10 @@ namespace CSharp_Image_Action
         public string FullPath { get => "/" + fullPath.Replace(GitHubRepoRoot.FullName,"").Replace("\\","/"); }
         private string fullPath;
         
+        [JsonPropertyName("GalleryIndexFileName")]
+        public System.IO.FileInfo IndexFileName { get => "/" + indexfilename.Replace(GitHubRepoRoot.FullName,"").Replace("\\","/"); }
+        protected System.IO.FileInfo indexfilename;
+        
         [JsonPropertyName("PhotoGalleries")] //JsonExtensionData
         public List<DirectoryDescriptor> Directories { get => directories; set => directories = value; }
         private System.Collections.Generic.List<DirectoryDescriptor> directories = new System.Collections.Generic.List<DirectoryDescriptor>();
@@ -60,9 +64,9 @@ namespace CSharp_Image_Action
         {
             foreach(DirectoryDescriptor dd in directories)
             {
-                dd.SaveMDFiles(Domain);
+                dd.SaveMDFiles(Domain, ImagesDirectory);
             }
-            System.IO.FileInfo fi = new FileInfo(ImagesDirectory.fullPath + "\\" + directoryName + ".md");
+            indexfilename = new FileInfo(ImagesDirectory.fullPath + "\\" + directoryName + ".md");
             
             //we need to overwrite them even if they exist (but we need some fortmat to allow edits)
             {
@@ -102,7 +106,7 @@ namespace CSharp_Image_Action
         }
         public void WriteDirectory(System.IO.TextWriter textWriter, DirectoryDescriptor dd)
         {
-            textWriter.WriteLine("[" + dd.DirectoryName + "]( ./"+ dd.DirectoryName + "/Index.md )");
+            textWriter.WriteLine("[" + dd.DirectoryName + "]( ./"+ dd.IndexFile.Name + ")");
             textWriter.WriteLine();
         }
     }
