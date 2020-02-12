@@ -60,10 +60,16 @@ namespace CSharp_Image_Action
             }
         }
         
+        // Only 1 directory deep support currently. not a problem because Jekyll doesn't support it
         public void SaveMDFiles(string Domain, System.IO.DirectoryInfo ImagesDirectory)
         {
-            indexfilename = new FileInfo(ImagesDirectory.FullName + "\\" + directoryName + ".md");
-
+            if(directoryName == ImagesDirectory.Name)
+            {
+                indexfilename = new FileInfo(ImagesDirectory.FullName + "\\Index.md");
+            }else{
+                indexfilename = new FileInfo(ImagesDirectory.FullName + "\\" + directoryName + ".md");
+            }
+            
             foreach(DirectoryDescriptor dd in directories)
             {
                 dd.SaveMDFiles(Domain, ImagesDirectory);
