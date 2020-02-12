@@ -17,7 +17,7 @@ namespace CSharp_Image_Action
     {
         [JsonPropertyName("Images")]
         public List<ImageDescriptor> Images { get => images; set => images = value; }
-        [JsonPropertyName("SubDirectories")] //JsonExtensionData
+        [JsonPropertyName("PhotoGalleries")] //JsonExtensionData
         public List<DirectoryDescriptor> Directories { get => directories; set => directories = value; }
         [JsonPropertyName("DirectoryName")]
         public string DirectoryName { get => directoryName; }
@@ -26,6 +26,10 @@ namespace CSharp_Image_Action
 
         private System.Collections.Generic.List<ImageDescriptor> images = new System.Collections.Generic.List<ImageDescriptor>();
         private System.Collections.Generic.List<DirectoryDescriptor> directories = new System.Collections.Generic.List<DirectoryDescriptor>();
+
+        
+         [JsonPropertyName("GalleryName")]
+
         protected string directoryName;
         private string fullPath;
 
