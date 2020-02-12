@@ -20,9 +20,9 @@ namespace CSharp_Image_Action
         [JsonPropertyName("SubDirectories")] //JsonExtensionData
         public List<DirectoryDescriptor> Directories { get => directories; set => directories = value; }
         [JsonPropertyName("DirectoryName")]
-        public string DirectoryName { get => directoryName; set => directoryName = value; }
+        public string DirectoryName { get => directoryName; }
         [JsonPropertyName("FullDirectoryPath")]
-        public string FullPath { get => fullPath; set => fullPath = value; }
+        public string FullPath { get => fullPath.Replace(GitHubRepoRoot.FullName,""); }
 
         private System.Collections.Generic.List<ImageDescriptor> images = new System.Collections.Generic.List<ImageDescriptor>();
         private System.Collections.Generic.List<DirectoryDescriptor> directories = new System.Collections.Generic.List<DirectoryDescriptor>();
@@ -91,7 +91,7 @@ namespace CSharp_Image_Action
 
         public void WriteImage(System.IO.TextWriter textWriter, ImageDescriptor id)
         {
-            textWriter.WriteLine("[ ![" + id.Name  + "](" + id.ThumbNailFile.Name + ") ](" + id.ReSizedFileInfo.Name + ")" );
+            textWriter.WriteLine("[ ![" + id.Name  + "](" + id.ThumbNailFile.FullName.Replace(GitHubRepoRoot.FullName,"") + ") ](" + id.ReSizedFileInfo.Name + ")" );
         }
         public void WriteDirectory(System.IO.TextWriter textWriter, DirectoryDescriptor dd)
         {
