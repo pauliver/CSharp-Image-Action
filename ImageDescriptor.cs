@@ -161,21 +161,20 @@ namespace CSharp_Image_Action
             file = fi;
             name = fi.Name;
             folder = di.FullName;
+
+            thumbnail_name = ImageDescriptor.thumbnail + "-" + directory.Name + "-" + file.Name;
+            ReSizedFileName = Folder + "\\" +  ImageDescriptor.resized  + "-" + Name;
         }
 
         public void FillBasicInfo()
         {
-            thumbnail_name = ImageDescriptor.thumbnail + "-" + directory.Name + "-" + file.Name;
-            ReSizedFileName = Folder + "\\" +  ImageDescriptor.resized  + "-" + Name;
+            var inStream = file.OpenRead();
+            using (Image image = Image.Load(inStream))
             {
-                var inStream = file.OpenRead();
-                using (Image image = Image.Load(inStream))
-                {
-                    height = image.Height;
-                    width = image.Width;
-                }
-                inStream.Close();
+                height = image.Height;
+                width = image.Width;
             }
+            inStream.Close();
         }
 
         public void FixUpPaths(System.IO.DirectoryInfo di)
