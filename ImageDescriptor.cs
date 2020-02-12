@@ -28,7 +28,7 @@ namespace CSharp_Image_Action
         private string fullPath;
         
         [JsonPropertyName("GalleryIndexFileName")]
-        public System.IO.FileInfo IndexFileName { get => "/" + indexfilename.Replace(GitHubRepoRoot.FullName,"").Replace("\\","/"); }
+        public string IndexFileName { get => "/" + indexfilename.FullName.Replace(GitHubRepoRoot.FullName,"").Replace("\\","/"); }
         protected System.IO.FileInfo indexfilename;
         
         [JsonPropertyName("PhotoGalleries")] //JsonExtensionData
@@ -62,16 +62,16 @@ namespace CSharp_Image_Action
         
         public void SaveMDFiles(string Domain, System.IO.DirectoryInfo ImagesDirectory)
         {
+            indexfilename = new FileInfo(ImagesDirectory.FullName + "\\" + directoryName + ".md");
+
             foreach(DirectoryDescriptor dd in directories)
             {
                 dd.SaveMDFiles(Domain, ImagesDirectory);
             }
-            indexfilename = new FileInfo(ImagesDirectory.fullPath + "\\" + directoryName + ".md");
-            
             //we need to overwrite them even if they exist (but we need some fortmat to allow edits)
             {
-                CreateIndexFile(fi, Domain);
-                System.Console.WriteLine("Create : " + fi.FullName);
+                CreateIndexFile(indexfilename, Domain);
+                System.Console.WriteLine("Create : " + indexfilename.FullName);
             }
         }
 
@@ -106,7 +106,7 @@ namespace CSharp_Image_Action
         }
         public void WriteDirectory(System.IO.TextWriter textWriter, DirectoryDescriptor dd)
         {
-            textWriter.WriteLine("[" + dd.DirectoryName + "]( ./"+ dd.IndexFile.Name + ")");
+            textWriter.WriteLine("[" + dd.DirectoryName + "]( ./"+ dd.indexfilename.Name + ")");
             textWriter.WriteLine();
         }
     }
