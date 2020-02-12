@@ -1,7 +1,7 @@
 # CSharp-Image-Action
 Working on an Action to resize images, make thumbnails, etc.. using .net core 3.1.100
 
-![.NET Core](https://github.com/pauliver/CSharp-Image-Action/workflows/.NET%20Core/badge.svg)
+[![.NET Core](https://github.com/pauliver/CSharp-Image-Action/workflows/.NET%20Core/badge.svg)](https://github.com/pauliver/CSharp-Image-Action/actions?query=workflow%3A%22.NET+Core%22)
 
 *no idea how i'm suposed to embed a copy/pasteable .yml file using markdown...*
 
