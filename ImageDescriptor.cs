@@ -26,10 +26,10 @@ namespace CSharp_Image_Action
 
         private System.Collections.Generic.List<ImageDescriptor> images = new System.Collections.Generic.List<ImageDescriptor>();
         private System.Collections.Generic.List<DirectoryDescriptor> directories = new System.Collections.Generic.List<DirectoryDescriptor>();
-
         
-         [JsonPropertyName("GalleryName")]
-
+        [JsonPropertyName("GalleryName")]
+        public string GalleryName { get => directoryName; }
+            
         protected string directoryName;
         private string fullPath;
 
