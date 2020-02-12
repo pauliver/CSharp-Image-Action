@@ -55,13 +55,14 @@ namespace CSharp_Image_Action
                 i.FixUpPaths(di);
             }
         }
-        public void SaveMDFiles(string Domain)
+        
+        public void SaveMDFiles(string Domain, System.IO.DirectoryInfo ImagesDirectory)
         {
             foreach(DirectoryDescriptor dd in directories)
             {
                 dd.SaveMDFiles(Domain);
             }
-            System.IO.FileInfo fi = new FileInfo(this.fullPath + "\\" + "Index.md");
+            System.IO.FileInfo fi = new FileInfo(ImagesDirectory.fullPath + "\\" + directoryName + ".md");
             
             //we need to overwrite them even if they exist (but we need some fortmat to allow edits)
             {
