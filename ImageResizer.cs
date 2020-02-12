@@ -149,9 +149,6 @@ namespace CSharp_Image_Action
                     return true;
                 }
             }
-            
-
-
         }
     }
 }
