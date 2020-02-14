@@ -10,20 +10,27 @@ Working on an Action to resize images, make thumbnails, etc.. using .net core 3.
 #### Example Usage of the .json file 
 
 *this output with works with Jekyll / github pages, to generate a programatic landing page (for hosting on GitHub Pages)*
-
-> # Programatic Gallery Generated Here:
 > 
+>  # Gallery
 > {% for gallery in site.data.galleryjson.PhotoGalleries %}
-> 
-> ### [{{gallery.GalleryName}}]({{gallery.FullDirectoryPath}})
->
->  {% for images in gallery.Images %}
->  
->  ![{{Gallery.ThumbnailName}}]({{images.ThumbnailFilePath}})
-> 
->  {% endfor %}
->  
+> ## [{{gallery.GalleryName}}]({{gallery.FullDirectoryPath}})
+> {% for images in gallery.Images %}
+> ![{{images.ThumbnailName}}]({{images.ThumbnailFilePath}})
 > {% endfor %}
+> {% for subGalleries in gallery.PhotoGalleries %}
+> ### [{{subGalleries.GalleryName}}]({{subGalleries.FullDirectoryPath}})
+> {% for subimages in subGalleries.Images %}
+> ![{{subimages.ThumbnailName}}]({{subimages.ThumbnailFilePath}})
+> {% endfor %}     
+> {% for ThreesubGalleries in subGalleries.PhotoGalleries %}     
+> #### [{{ThreesubGalleries.GalleryName}}]({{ThreesubGalleries.FullDirectoryPath}})     
+> {% for Threesubimages in ThreesubGalleries.Images %}
+> ![{{Threesubimages.ThumbnailName}}]({{Threesubimages.ThumbnailFilePath}})
+> {% endfor %}
+> {% endfor %}
+> {% endfor %}
+> {% endfor %}
+
 
 #### Example .yml file to build it
 
