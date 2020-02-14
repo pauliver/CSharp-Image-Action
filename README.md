@@ -3,6 +3,28 @@ Working on an Action to resize images, make thumbnails, etc.. using .net core 3.
 
 [![Build .NET Core App](https://github.com/pauliver/CSharp-Image-Action/workflows/Build%20.NET%20Core%20App/badge.svg)](https://github.com/pauliver/CSharp-Image-Action/actions?query=workflow%3A%22Build+.NET+Core+App%22)
 
+--------
+
+*and now how you use it in your own repo*
+
+#### Example Usage of the .json file output with Jekyll programatic landing page
+
+> # Programatic Gallery Generated Here:
+> 
+> {% for gallery in site.data.galleryjson.PhotoGalleries %}
+> 
+> ### [{{gallery.GalleryName}}]({{gallery.FullDirectoryPath}})
+>
+>  {% for images in gallery.Images %}
+>  
+>  ![{{Gallery.ThumbnailName}}]({{images.ThumbnailFilePath}})
+> 
+>  {% endfor %}
+>  
+> {% endfor %}
+
+#### Example .yml file to build it
+
 *no idea how i'm suposed to embed a copy/pasteable .yml file using markdown...*
 
 > name: Create Thumbnails and compressed images
