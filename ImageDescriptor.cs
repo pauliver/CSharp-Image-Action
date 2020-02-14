@@ -124,14 +124,14 @@ namespace CSharp_Image_Action
             tw.WriteLine("----");
             foreach(ImageDescriptor i in images)
             {
-                WriteImage(tw, i, Domain, ImagesDirectory);
+                WriteImage( tw, i, Domain, ImagesDirectory);
             }
             tw.WriteLine();
             tw.WriteLine("----");
             tw.WriteLine();
             foreach(DirectoryDescriptor d in Directories)
             {
-                WriteDirectory(tw,d);
+                WriteDirectory( tw, d, ImagesDirectory);
             }
             tw.WriteLine();
             tw.WriteLine("[Gallery]( ./Index.html)"); 
@@ -150,12 +150,15 @@ namespace CSharp_Image_Action
         {
             textWriter.WriteLine("[![" + id.Name  + "](" + Domain + "/" + id.ThumbNailFile.FullName.Replace(GitHubRepoRoot.FullName,"").Replace(@"\","/") + ")](" + id.ReSizedFileInfo.FullName.Replace(ImagesDirectory.FullName,"").Replace(@"\","/") + ")" );
         }
-        public void WriteDirectory(System.IO.TextWriter textWriter, DirectoryDescriptor dd)
+        public void WriteDirectory(System.IO.TextWriter textWriter, DirectoryDescriptor dd, System.IO.DirectoryInfo ImagesDirectory)
         {
             textWriter.WriteLine("### [" + dd.directoryName + "]( ./"+ dd.indexfilename.Name.Replace(".md",".html") + ")"); 
+
             if(dd.ImageThumbnail != null)
             {
-                textWriter.WriteLine("[ ![Thumbnail](" + dd.ImageThumbnail + ")]( ./"+ dd.indexfilename.Name.Replace(".md",".html") + ")"); 
+                var inlinelater = dd.ImageThumbnail.Replace(ImagesDirectory.Name,"").Replace(@"\","/");
+
+                textWriter.WriteLine("[ ![Thumbnail](" + inlinelater + ")]( ./"+ dd.indexfilename.Name.Replace(".md",".html") + ")"); 
             }
             textWriter.WriteLine();
         }
