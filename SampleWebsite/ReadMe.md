@@ -9,9 +9,9 @@ The Sample website consists of 3 files and a few folders
 
 # Actions .yml file
 
-# generated .json file
+# generated galleryjson.json file
 
-3 Folder to put the images in 
+# Folder to put the images in 
 
 # Index.md 
 
