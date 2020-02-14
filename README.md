@@ -3,27 +3,39 @@ Working on an Action to resize images, make thumbnails, etc.. using .net core 3.
 
 [![Build .NET Core App](https://github.com/pauliver/CSharp-Image-Action/workflows/Build%20.NET%20Core%20App/badge.svg)](https://github.com/pauliver/CSharp-Image-Action/actions?query=workflow%3A%22Build+.NET+Core+App%22)
 
+
 --------
 
 *and now how you use it in your own repo*
 
+[This folder](https://github.com/pauliver/CSharp-Image-Action/tree/master/SampleWebsite) has a complete copy of everything you need to use this elsewhere 
+
+--------
+
 #### Example Usage of the .json file 
 
 *this output with works with Jekyll / github pages, to generate a programatic landing page (for hosting on GitHub Pages)*
-
-> # Programatic Gallery Generated Here:
 > 
+>  # Gallery
 > {% for gallery in site.data.galleryjson.PhotoGalleries %}
-> 
-> ### [{{gallery.GalleryName}}]({{gallery.FullDirectoryPath}})
->
->  {% for images in gallery.Images %}
->  
->  ![{{Gallery.ThumbnailName}}]({{images.ThumbnailFilePath}})
-> 
->  {% endfor %}
->  
+> ## [{{gallery.GalleryName}}]({{gallery.FullDirectoryPath}})
+> {% for images in gallery.Images %}
+> ![{{images.ThumbnailName}}]({{images.ThumbnailFilePath}})
 > {% endfor %}
+> {% for subGalleries in gallery.PhotoGalleries %}
+> ### [{{subGalleries.GalleryName}}]({{subGalleries.FullDirectoryPath}})
+> {% for subimages in subGalleries.Images %}
+> ![{{subimages.ThumbnailName}}]({{subimages.ThumbnailFilePath}})
+> {% endfor %}     
+> {% for ThreesubGalleries in subGalleries.PhotoGalleries %}     
+> #### [{{ThreesubGalleries.GalleryName}}]({{ThreesubGalleries.FullDirectoryPath}})     
+> {% for Threesubimages in ThreesubGalleries.Images %}
+> ![{{Threesubimages.ThumbnailName}}]({{Threesubimages.ThumbnailFilePath}})
+> {% endfor %}
+> {% endfor %}
+> {% endfor %}
+> {% endfor %}
+
 
 #### Example .yml file to build it
 
