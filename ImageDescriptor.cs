@@ -123,7 +123,7 @@ namespace CSharp_Image_Action
             }
             tw.WriteLine();
             tw.WriteLine("[Gallery]( ./Index.html)"); 
-            tw.WriteLine(" or ");
+            tw.WriteLine("  or ");
             tw.WriteLine("[Home]( ../)");
             tw.WriteLine();
             tw.WriteLine("----");
