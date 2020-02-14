@@ -115,8 +115,8 @@ namespace CSharp_Image_Action
                 WriteDirectory(tw,d);
             }
             tw.WriteLine();
-            textWriter.WriteLine("[Gallery Home]( ./Index.html)"); 
-            textWriter.WriteLine("[Back]( ../)");
+            tw.WriteLine("[Gallery Home]( ./Index.html)"); 
+            tw.WriteLine("[Back]( ../)");
             tw.WriteLine("----");
             tw.Flush();
             tw.Close();
