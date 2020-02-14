@@ -72,7 +72,7 @@ namespace CSharp_Image_Action
             }
 
 
-            string[] extensionList = new string[]{".jpg",".png",".jpeg"};
+            string[] extensionList = new string[]{".jpg",".png",".jpeg", ".JPG", ".PNG", ".JPEG"};
             DirectoryDescriptor DD = new DirectoryDescriptor(ImagesDirectory.Name, ImagesDirectory.FullName);
             // Traverse Image Directory
             ImageHunter ih = new ImageHunter(ref DD,ImagesDirectory,extensionList);
