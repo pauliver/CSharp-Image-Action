@@ -86,6 +86,20 @@ namespace CSharp_Image_Action
         {
             System.IO.TextWriter tw = fi.CreateText();
 
+            tw.WriteLine("---");
+            
+            if(directoryName == ImagesDirectory.Name)
+            {
+                tw.WriteLine("permalink: /" + ImagesDirectory.Name + "Index.html);
+                tw.WriteLine("title: Gallery: " + Domain );
+                tw.WriteLine("page_variable:" + Domain + index ");
+            }else{               
+                tw.WriteLine("permalink: /" + ImagesDirectory.Name + "//" +  Domain + ".html);
+                tw.WriteLine("title: Gallery: " + Domain);
+                tw.WriteLine("page_variable:" +  index ");
+            }
+            tw.WriteLine("---");
+                
             tw.WriteLine("# " + this.directoryName);
             tw.WriteLine();
             tw.WriteLine("----");
@@ -101,6 +115,8 @@ namespace CSharp_Image_Action
                 WriteDirectory(tw,d);
             }
             tw.WriteLine();
+            textWriter.WriteLine("[Gallery Home]( ./Index.html)"); 
+            textWriter.WriteLine("[Back]( ../)");
             tw.WriteLine("----");
             tw.Flush();
             tw.Close();
@@ -112,7 +128,7 @@ namespace CSharp_Image_Action
         }
         public void WriteDirectory(System.IO.TextWriter textWriter, DirectoryDescriptor dd)
         {
-            textWriter.WriteLine("[" + dd.DirectoryName + "]( ./"+ dd.indexfilename.Name + ")");
+            textWriter.WriteLine("[" + dd.DirectoryName + "]( ./"+ dd.indexfilename.Name + ")"); //.Replace(".md",".html")
             textWriter.WriteLine();
         }
     }
