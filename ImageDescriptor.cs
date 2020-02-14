@@ -90,11 +90,11 @@ namespace CSharp_Image_Action
             
             if(directoryName == ImagesDirectory.Name)
             {
-                tw.WriteLine("permalink: /" + ImagesDirectory.Name + "Index.html);
+                tw.WriteLine("permalink: /" + ImagesDirectory.Name + "Index.html");
                 tw.WriteLine("title: Gallery: " + Domain );
                 tw.WriteLine("page_variable:" + Domain + index ");
             }else{               
-                tw.WriteLine("permalink: /" + ImagesDirectory.Name + "//" +  Domain + ".html);
+                tw.WriteLine("permalink: /" + ImagesDirectory.Name + "//" +  Domain + ".html");
                 tw.WriteLine("title: Gallery: " + Domain);
                 tw.WriteLine("page_variable:" +  index ");
             }
