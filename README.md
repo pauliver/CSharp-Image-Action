@@ -3,9 +3,14 @@ Working on an Action to resize images, make thumbnails, etc.. using .net core 3.
 
 [![Build .NET Core App](https://github.com/pauliver/CSharp-Image-Action/workflows/Build%20.NET%20Core%20App/badge.svg)](https://github.com/pauliver/CSharp-Image-Action/actions?query=workflow%3A%22Build+.NET+Core+App%22)
 
+
 --------
 
 *and now how you use it in your own repo*
+
+[This folder](https://github.com/pauliver/CSharp-Image-Action/tree/master/SampleWebsite) has a complete copy of everything you need to use this elsewhere 
+
+--------
 
 #### Example Usage of the .json file 
 
