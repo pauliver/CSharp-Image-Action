@@ -7,7 +7,9 @@ Working on an Action to resize images, make thumbnails, etc.. using .net core 3.
 
 *and now how you use it in your own repo*
 
-#### Example Usage of the .json file output with Jekyll programatic landing page
+#### Example Usage of the .json file 
+
+*this output with works with Jekyll / github pages, to generate a programatic landing page (for hosting on GitHub Pages)*
 
 > # Programatic Gallery Generated Here:
 > 
