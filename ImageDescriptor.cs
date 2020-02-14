@@ -98,7 +98,14 @@ namespace CSharp_Image_Action
                 tw.WriteLine("title: Gallery: " + ImagesDirectory.Name + Domain );
                 tw.WriteLine("page_variable:" +  ImagesDirectory.Name + Domain );
             }
+            
+            
+            tw.WriteLine();
+            tw.WriteLine("{% include header.md %}");
+            tw.WriteLine();
             tw.WriteLine("---");
+            
+            
                 
             tw.WriteLine("# " + this.directoryName);
             tw.WriteLine();
@@ -119,6 +126,9 @@ namespace CSharp_Image_Action
             tw.WriteLine("[Back]( ../)");
             tw.WriteLine();
             tw.WriteLine("----");
+            tw.WriteLine();
+            tw.WriteLine("{% include footer.md %}");
+            tw.WriteLine();
             tw.Flush();
             tw.Close();
         }
