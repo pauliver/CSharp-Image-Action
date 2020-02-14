@@ -156,9 +156,9 @@ namespace CSharp_Image_Action
 
             if(dd.ImageThumbnail != null)
             {
-                var inlinelater = dd.ImageThumbnail.Replace(ImagesDirectory.Name,"").Replace(@"\","/");
+                var inlinelater = "." + dd.ImageThumbnail.Replace(ImagesDirectory.Name,"").Replace(@"\","/");
 
-                textWriter.WriteLine("[ ![Thumbnail](" + inlinelater + ")]( ./"+ dd.indexfilename.Name.Replace(".md",".html") + ")"); 
+                textWriter.WriteLine("[ ![" +  dd.directoryName +  "-Thumbnail](" + inlinelater + ")]( ./"+ dd.indexfilename.Name.Replace(".md",".html") + ")"); 
             }
             textWriter.WriteLine();
         }
