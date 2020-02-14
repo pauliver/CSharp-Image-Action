@@ -26,8 +26,11 @@ namespace CSharp_Image_Action
         [JsonPropertyName("FullDirectoryPath")]
         public string FullPath { get => "/" + fullPath.Replace(GitHubRepoRoot.FullName,"").Replace("\\","/"); }
         private string fullPath;
+          
+        [JsonPropertyName("GalleryIndexHTMLFile")]
+        public string GalleryIndexHTMLFile { get => "/" + indexfilename.FullName.Replace(GitHubRepoRoot.FullName,"").Replace("\\","/").Replace(".md",".html"); }
         
-        [JsonPropertyName("GalleryIndexFileName")]
+        [JsonPropertyName("GalleryIndexMarkdownFile")]
         public string IndexFileName { get => "/" + indexfilename.FullName.Replace(GitHubRepoRoot.FullName,"").Replace("\\","/"); }
         protected System.IO.FileInfo indexfilename;
         
@@ -40,6 +43,9 @@ namespace CSharp_Image_Action
         private System.Collections.Generic.List<ImageDescriptor> images = new System.Collections.Generic.List<ImageDescriptor>();
 
         private DirectoryInfo GitHubRepoRoot;
+
+        [JsonPropertyName("ImageThumbnail")]
+        public string ImageThumbnail { get; set; }
 
         public DirectoryDescriptor(string directoryname, string fullpath)
         {
@@ -54,9 +60,15 @@ namespace CSharp_Image_Action
             { 
                 dd.FixUpPaths(di);
             }
+            bool first = true;
             foreach(ImageDescriptor i in images)
             {
                 i.FixUpPaths(di);
+                if(first || i.Name.ToLower().StartsWith("thumbnail"))
+                {
+                    first = false; // we need to have a thumbnail, so it's the first image
+                    ImageThumbnail = i.JSON_ThumbnailFile;
+                }
             }
         }
         
@@ -140,7 +152,7 @@ namespace CSharp_Image_Action
         }
         public void WriteDirectory(System.IO.TextWriter textWriter, DirectoryDescriptor dd)
         {
-            textWriter.WriteLine("[" + dd.DirectoryName + "]( ./"+ dd.indexfilename.Name.Replace(".md",".html") + ")"); //
+            textWriter.WriteLine("[" + dd.directoryName + "]( ./"+ dd.indexfilename.Name.Replace(".md",".html") + ")"); //
             textWriter.WriteLine();
         }
     }
@@ -158,6 +170,9 @@ namespace CSharp_Image_Action
         public int ImageWidth { get => width; set => width = value; }
         private int height;
         public int ImageHeight { get => height; set => height = value; }
+        
+        private string name;
+        public string Name { get => name; set => name = value; }
         private string folder;
         public string Folder { get => folder; set => folder = value; }
         
@@ -166,12 +181,11 @@ namespace CSharp_Image_Action
         [JsonPropertyName("OriginalFilePath")]
         public string JSON_ImageFIle { get => file.FullName.Replace(GitHubRepoRoot.FullName,"");}
         protected FileInfo file;  
-        private string name;
-        public string Name { get => name; set => name = value; }
         
         private string thumbnail_name;
         protected System.IO.FileInfo thumbNailFile;
-        public string ThumbnailName { get => thumbnail_name; set => thumbnail_name = value; }
+        [JsonIgnore]
+        public string ThumbnailName { get => thumbnail_name; }
         [JsonIgnore]
         public FileInfo ThumbNailFile { get => thumbNailFile; set => thumbNailFile = value; }
         [JsonPropertyName("ThumbnailFilePath")]
