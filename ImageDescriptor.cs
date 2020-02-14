@@ -117,6 +117,7 @@ namespace CSharp_Image_Action
             tw.WriteLine();
             tw.WriteLine("[Gallery Home]( ./Index.html)"); 
             tw.WriteLine("[Back]( ../)");
+            tw.WriteLine();
             tw.WriteLine("----");
             tw.Flush();
             tw.Close();
@@ -128,7 +129,7 @@ namespace CSharp_Image_Action
         }
         public void WriteDirectory(System.IO.TextWriter textWriter, DirectoryDescriptor dd)
         {
-            textWriter.WriteLine("[" + dd.DirectoryName + "]( ./"+ dd.indexfilename.Name + ")"); //.Replace(".md",".html")
+            textWriter.WriteLine("[" + dd.DirectoryName + "]( ./"+ dd.indexfilename.Name.Replace(".md",".html") + ")"); //
             textWriter.WriteLine();
         }
     }
