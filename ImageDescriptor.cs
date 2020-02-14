@@ -152,7 +152,11 @@ namespace CSharp_Image_Action
         }
         public void WriteDirectory(System.IO.TextWriter textWriter, DirectoryDescriptor dd)
         {
-            textWriter.WriteLine("[" + dd.directoryName + "]( ./"+ dd.indexfilename.Name.Replace(".md",".html") + ")"); //
+            textWriter.WriteLine("### [" + dd.directoryName + "]( ./"+ dd.indexfilename.Name.Replace(".md",".html") + ")"); 
+            if(dd.ImageThumbnail != null)
+            {
+                textWriter.WriteLine("[ ![Thumbnail](" + dd.ImageThumbnail + ")]( ./"+ dd.indexfilename.Name.Replace(".md",".html") + ")"); 
+            }
             textWriter.WriteLine();
         }
     }
@@ -182,14 +186,6 @@ namespace CSharp_Image_Action
         public string JSON_ImageFIle { get => file.FullName.Replace(GitHubRepoRoot.FullName,"");}
         protected FileInfo file;  
         
-        private string thumbnail_name;
-        protected System.IO.FileInfo thumbNailFile;
-        [JsonIgnore]
-        public string ThumbnailName { get => thumbnail_name; }
-        [JsonIgnore]
-        public FileInfo ThumbNailFile { get => thumbNailFile; set => thumbNailFile = value; }
-        [JsonPropertyName("ThumbnailFilePath")]
-        public string JSON_ThumbnailFile { get => thumbNailFile.FullName.Replace(GitHubRepoRoot.FullName,"");}
 
         protected FileInfo reSizedFileInfo; 
         [JsonIgnore]
@@ -199,6 +195,16 @@ namespace CSharp_Image_Action
         public FileInfo ReSizedFileInfo { get => reSizedFileInfo; set => reSizedFileInfo = value; }
         [JsonPropertyName("ResizedFilePath")]
         public string JSON_ResizedImage { get => reSizedFileInfo.FullName.Replace(GitHubRepoRoot.FullName,"");}
+
+
+        private string thumbnail_name;
+        protected System.IO.FileInfo thumbNailFile;
+        [JsonIgnore]
+        public string ThumbnailName { get => thumbnail_name; }
+        [JsonIgnore]
+        public FileInfo ThumbNailFile { get => thumbNailFile; set => thumbNailFile = value; }
+        [JsonPropertyName("ThumbnailFilePath")]
+        public string JSON_ThumbnailFile { get => thumbNailFile.FullName.Replace(GitHubRepoRoot.FullName,"");}
 
         protected DirectoryInfo directory;
         private DirectoryInfo GitHubRepoRoot;
