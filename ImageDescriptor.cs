@@ -122,8 +122,9 @@ namespace CSharp_Image_Action
                 WriteDirectory(tw,d);
             }
             tw.WriteLine();
-            tw.WriteLine("[Gallery Home]( ./Index.html)"); 
-            tw.WriteLine("[Back]( ../)");
+            tw.WriteLine("[Gallery]( ./Index.html)"); 
+            tw.WriteLine(" - - - ");
+            tw.WriteLine("[Home]( ../)");
             tw.WriteLine();
             tw.WriteLine("----");
             tw.WriteLine();
