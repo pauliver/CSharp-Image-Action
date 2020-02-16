@@ -12,7 +12,7 @@ Working on an Action to resize images, make thumbnails, etc.. using .net core 3.
 
 --------
 
-#### Example Usage of the .json file 
+#### Example Usage of the .json file through Liquid and GitHub Markdown
 
 ```markdown
 
