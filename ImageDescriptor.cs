@@ -33,6 +33,9 @@ namespace CSharp_Image_Action
         [JsonPropertyName("GalleryIndexMarkdownFile")]
         public string IndexFileName { get => "/" + indexfilename.FullName.Replace(GitHubRepoRoot.FullName,"").Replace("\\","/"); }
         protected System.IO.FileInfo indexfilename;
+
+        [JsonPropertyName("ImageThumbnail")]
+        public string ImageThumbnail { get; set; }
         
         [JsonPropertyName("PhotoGalleries")] //JsonExtensionData
         public List<DirectoryDescriptor> Directories { get => directories; set => directories = value; }
@@ -43,9 +46,6 @@ namespace CSharp_Image_Action
         private System.Collections.Generic.List<ImageDescriptor> images = new System.Collections.Generic.List<ImageDescriptor>();
 
         private DirectoryInfo GitHubRepoRoot;
-
-        [JsonPropertyName("ImageThumbnail")]
-        public string ImageThumbnail { get; set; }
 
         public DirectoryDescriptor(string directoryname, string fullpath)
         {
