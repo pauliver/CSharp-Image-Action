@@ -45,8 +45,8 @@ Working on an Action to resize images, make thumbnails, etc.. using .net core 3.
 name: Create Thumbnails, Compressed images, Build Jekyll Site, Branch to Release on Success
 env:
   URL: "example.com"
-  AutoMergeLabel: automerge
-  GHPages: gh-pages
+  AutoMergeLabel: "automerge"
+  GHPages: "gh-pages"
 on:
   push:
     branches: [master]
@@ -88,7 +88,7 @@ jobs:
         run: dotnet build ImgTools/ --configuration Release
       
       - name: Run the Image Tools
-        run: dotnet  ${{github.workspace}}\ImgTools\bin\Release\netcoreapp3.1\CSharp-Image-Action.dll  ${{github.workspace}}\main\gallery\ ${{github.workspace}}\main\ https://${{URL}}
+        run: dotnet  ${{github.workspace}}\ImgTools\bin\Release\netcoreapp3.1\CSharp-Image-Action.dll  ${{github.workspace}}\main\gallery\ ${{github.workspace}}\main\ https://${{env.URL}}
 
       - name: Commit the resized files and .json
         run: |
@@ -136,8 +136,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: tests all passed, creating PR for gh-pages
           base: master
-          branch: ${{GHPages}}
-          labels: ${{AutoMergeLabel}}
+          branch: ${{env.GHPages}}
+          labels: ${{env.AutoMergeLabel}}
   merge_pr_if_sucess:
     name: Merge the PR we created
     needs: [create_pr_if_success]
@@ -150,8 +150,9 @@ jobs:
         uses: "pascalgn/automerge-action@ecb16453ce68e85b1e23596c8caa7e7499698a84"
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          MERGE_LABELS: ${{AutoMergeLabel}},"!work in progress"
-          MERGE_REMOVE_LABELS: ${{AutoMergeLabel}}
+          MERGE_LABELS: ${{env.AutoMergeLabel}},"!work in progress"
+          MERGE_REMOVE_LABELS: ${{env.AutoMergeLabel}}
           MERGE_DELETE_BRANCH: false	
           UPDATE_METHOD: "merge"
+
 ```
