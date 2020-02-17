@@ -45,8 +45,9 @@ namespace CSharp_Image_Action
         public List<ImageDescriptor> Images { get => images; set => images = value; }
         private System.Collections.Generic.List<ImageDescriptor> images = new System.Collections.Generic.List<ImageDescriptor>();
 
+        // Ensures ever run of this has some changes
         [JsonPropertyName("GeneratedDateTime")]
-        public DateTime GeneratedDateTime { get => System.DateTime.UtcNow.ToString(); }
+        public string GeneratedDateTime { get => System.DateTime.UtcNow.ToString(); }
         
         private DirectoryInfo GitHubRepoRoot;
 
