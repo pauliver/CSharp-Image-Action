@@ -44,7 +44,7 @@ Working on an Action to resize images, make thumbnails, etc.. using .net core 3.
 ```yml
 name: Create Thumbnails, Compressed images, Build Jekyll Site, Branch to Release on Success
 env:
-  URL: "pauliver.com"
+  URL: "example.com"
   AutoMergeLabel: automerge
   GHPages: gh-pages
 on:
