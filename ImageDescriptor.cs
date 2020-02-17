@@ -34,6 +34,9 @@ namespace CSharp_Image_Action
         public string IndexFileName { get => "/" + indexfilename.FullName.Replace(GitHubRepoRoot.FullName,"").Replace("\\","/"); }
         protected System.IO.FileInfo indexfilename;
 
+        [JsonPropertyName("GeneratedDateTime")]
+        public DateTime GeneratedDateTime { get => System.DateTime.UtcNow.ToString(); }
+        
         [JsonPropertyName("ImageThumbnail")]
         public string ImageThumbnail { get; set; }
         
