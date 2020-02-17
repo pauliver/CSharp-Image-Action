@@ -1,7 +1,7 @@
 name: Create Thumbnails, Compressed images, Build Jekyll Site, Branch to Release on Success
 on:
   push:
-    branches: [master, gh-pages]
+    branches: [master]
   page_build: 
   pull_request:
     paths:
