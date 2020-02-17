@@ -8,7 +8,7 @@ Working on an Action to resize images, make thumbnails, etc.. using .net core 3.
 
 *and now how you use it in your own repo*
 
-**OutDated as of 2/22/20 - shouldn't be hard to make work, new instructions coming soon**
+**OutDated as of 2/22/20 - shouldn't be hard to make work, new instructions coming soon check out the folder below**
 
 [This folder](https://github.com/pauliver/CSharp-Image-Action/tree/master/SampleWebsite) has a complete copy of everything you need to use this elsewhere 
 
