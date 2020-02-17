@@ -48,7 +48,7 @@ jobs:
           git config --local user.name "GitHub Action"
           git add *
           git commit -m "Add resized images" -a
-        working-directory: D:\a\Pauliver.com\Pauliver.com\main\ 
+        working-directory: main 
         shell: powershell
       - name: Push changes
         uses: ad-m/github-push-action@master
