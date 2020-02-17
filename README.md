@@ -8,6 +8,8 @@ Working on an Action to resize images, make thumbnails, etc.. using .net core 3.
 
 *and now how you use it in your own repo*
 
+**OutDated as of 2/22/20 - shouldn't be hard to make work, new instructions coming soon**
+
 [This folder](https://github.com/pauliver/CSharp-Image-Action/tree/master/SampleWebsite) has a complete copy of everything you need to use this elsewhere 
 
 --------
@@ -42,6 +44,7 @@ Working on an Action to resize images, make thumbnails, etc.. using .net core 3.
 ```yml
 name: Create Thumbnails and compressed images
 on:
+  page_build: 
   push:
     branches: master
   pull_request:
