@@ -1,20 +1,22 @@
-name: Create Thumbnails and compressed images
+name: Create Thumbnails, Compressed images, Build Jekyll Site, Branch to Release on Success
 on:
   push:
-    branches: master
+    branches: [master, gh-pages]
+  page_build: 
   pull_request:
     paths:
       - '**.jpg'
+      - '**.jpeg'
       - '**.png'
       - '**.webp'
 
 jobs:
-  build:
-    runs-on: windows-latest
+  process_images:
+    name: Process Images with DotNet ${{ matrix.dotnet }}
+    runs-on: [windows-latest]
     strategy:
       matrix:
         dotnet: [ '3.1.100' ]
-    name: Dotnet ${{ matrix.dotnet }} ImageCompression
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -38,14 +40,56 @@ jobs:
         run: dotnet build ImgTools/ --configuration Release
       
       - name: Run the Image Tools
-        run: dotnet <hardcode path to compiled ImagTools repo>  <hardcode path main repo>\<folder with images>\  <hardcode path main repo> <domain>
+        run: dotnet ${{ImgTools}}\bin\Release\netcoreapp3.1\CSharp-Image-Action.dll  ${{main}}\gallery\ main\ ${{Domain}}
 
-      - name: Commit files
+      - name: Commit the resized files and .json
         run: |
-          cd <hardcode path main repo>
-          git config --local user.email "email@email.com"
+          git config --local user.email "actions@users.noreply.github.com"
           git config --local user.name "GitHub Action"
           git add *
           git commit -m "Add resized images" -a
-          git push
-          cd <hardcode path main repo>
+        working-directory: D:\a\Pauliver.com\Pauliver.com\main\ 
+        shell: powershell
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          directory: main
+  build_jekyll_site:
+    name: Build the site in the jekyll/builder container
+    needs: process_images
+    runs-on: [ubuntu-latest]
+    strategy:
+      matrix:
+        dotnet: [ '3.1.100' ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - run: |
+          docker run \
+          -v ${{ github.workspace }}:/srv/jekyll -v ${{ github.workspace }}/_site:/srv/jekyll/_site \
+          jekyll/builder:latest /bin/bash -c "chmod 777 /srv/jekyll && jekyll build --future"
+  branch_if_success:
+    name: Branch to gh-pages if everything works
+    needs: [process_images, build_jekyll_site]
+    runs-on: [windows-latest]
+    strategy:
+      matrix:
+        dotnet: [ '3.1.100' ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: main 
+      - name: Commit to the gh-pages branch
+        run: |
+          git config --local user.email "actions@users.noreply.github.com"
+          git config --local user.name "GitHub Action"
+          git commit -m "Pushing to gh-pages branch" -a
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          directory: main
+          branch: gh-pages 
+          
