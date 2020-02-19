@@ -8,11 +8,13 @@ Working on an Action to resize images, make thumbnails, etc.. using .net core 3.
 
 Clone this [Template Repo](https://github.com/pauliver/Photo-Gallery-Template)
 
-**OutDated as of 2/22/20 - need to protect branch, when they match the script nukes it.. not helpful**
+**below here is outdated info**
+--------
+
+*OutDated as of 2/22/20 - need to protect branch, when they match the script nukes it.. not helpful*
 
 [This folder](https://github.com/pauliver/CSharp-Image-Action/tree/master/SampleWebsite) has a complete copy of everything you need to use this elsewhere 
 
---------
 
 #### Example Usage of the .json file through Liquid and GitHub Markdown
 
