@@ -6,7 +6,7 @@ Working on an Action to resize images, make thumbnails, etc.. using .net core 3.
 
 --------
 
-*and now how you use it in your own repo*
+Clone this [Template Repo](https://github.com/pauliver/Photo-Gallery-Template)
 
 **OutDated as of 2/22/20 - need to protect branch, when they match the script nukes it.. not helpful**
 
