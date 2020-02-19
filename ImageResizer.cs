@@ -35,7 +35,7 @@ namespace CSharp_Image_Action
 
         System.IO.DirectoryInfo ThumbNailDirectory;
 
-        public ImageResizer(System.IO.DirectoryInfo thumbnaildirectory, int ThumbNail_Width = 256, int ThumbNail_Height = 256, int Main_Width = 1024, int Main_Height = 1024, bool preserve_ratio = true, bool BiasForLongEdge = true)
+        public ImageResizer(System.IO.DirectoryInfo thumbnaildirectory, int ThumbNail_Width = 384, int ThumbNail_Height = 384, int Main_Width = 1536, int Main_Height = 1536, bool preserve_ratio = true, bool BiasForLongEdge = true)
         {
             this.Thumbnail = new Box(ThumbNail_Width,ThumbNail_Height,preserve_ratio,BiasForLongEdge);
             this.StandardImage = new Box(Main_Width,Main_Height,preserve_ratio,BiasForLongEdge);
