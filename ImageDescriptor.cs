@@ -107,7 +107,7 @@ namespace CSharp_Image_Action
             {
                 tw.WriteLine("permalink: /" + ImagesDirectory.Name + "/index.html");
                 tw.WriteLine("title: /" + ImagesDirectory.Name + "/index" );
-                tw.WriteLine("page_variable:" +  Domain  );
+                tw.WriteLine("page_variable: " +  Domain  );
             }else{               
                 tw.WriteLine("permalink: /" + ImagesDirectory.Name + "/" +  Domain + ".html");
                 tw.WriteLine("title: /" + ImagesDirectory.Name + "/" +  Domain );
