@@ -118,7 +118,6 @@ namespace CSharp_Image_Action
             tw.WriteLine();
             tw.WriteLine("{% include header.md %}");
             tw.WriteLine();
-            tw.WriteLine("---");
             
             
                 
@@ -137,7 +136,7 @@ namespace CSharp_Image_Action
                 WriteDirectory( tw, d, ImagesDirectory);
             }
             tw.WriteLine();
-            tw.WriteLine("[Gallery]( ./Index.html)"); 
+            tw.WriteLine("[Gallery]( ./index.html)"); 
             tw.WriteLine("  or ");
             tw.WriteLine("[Home]( ../)");
             tw.WriteLine();
