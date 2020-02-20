@@ -169,8 +169,8 @@ namespace CSharp_Image_Action
         public void WriteImage(System.IO.TextWriter textWriter, ImageDescriptor id, string Domain, System.IO.DirectoryInfo ImagesDirectory)
         {
 
-            textWriter.WriteLine("<a href=\"" + id.ReSizedFileInfo.FullName.Replace(ImagesDirectory.FullName,"").Replace(@"\","/") + "\" data-fancybox=\"" + ImagesDirectory.FullName + "\" data-caption=\"" + ImagesDirectory.FullName + " : " + id.Name + "\">");
-	        textWriter.WriteLine("    <img class=\"image-thumb\" src=\"" + id.ThumbNailFile.FullName.Replace(GitHubRepoRoot.FullName,"").Replace(@"\","/") + "\" alt=\"" + id.Name + "\" />");
+            textWriter.WriteLine("<a href=\"" + id.ReSizedFileInfo.FullName.Replace(ImagesDirectory.FullName,"").Replace(@"\","/") + "\" data-fancybox=\"" + id.ThumbNailFile.FullName.Replace(GitHubRepoRoot.FullName,"").Replace(@"\","/") + "\" data-caption=\"" + id.Name + "\">");
+	        textWriter.WriteLine("    <img class=\"image-thumb\" src=\"" + Domain  + "/" + id.ThumbNailFile.FullName.Replace(GitHubRepoRoot.FullName,"").Replace(@"\","/") + "\" alt=\"" + id.Name + "\" />");
             textWriter.WriteLine("</a>");
             //textWriter.WriteLine("[![" + id.Name  + "](" /* + Domain  + "/" */ + id.ThumbNailFile.FullName.Replace(GitHubRepoRoot.FullName,"").Replace(@"\","/") + ")](" + id.ReSizedFileInfo.FullName.Replace(ImagesDirectory.FullName,"").Replace(@"\","/") + ")" );
         }
