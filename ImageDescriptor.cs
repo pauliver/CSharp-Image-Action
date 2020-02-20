@@ -101,13 +101,15 @@ namespace CSharp_Image_Action
         public void CreateIndexFile(System.IO.FileInfo fi, string Domain, System.IO.DirectoryInfo ImagesDirectory)
         {
             System.IO.TextWriter tw = fi.CreateText();
-
+            bool DirectoryListing = false;
+            
             tw.WriteLine("---");
             if(directoryName == ImagesDirectory.Name)
             {
                 tw.WriteLine("permalink: /" + ImagesDirectory.Name + "/index.html");
                 tw.WriteLine("title: /" + ImagesDirectory.Name + "/index" );
                 tw.WriteLine("page_variable: " +  this.directoryName  );
+                DirectoryListing = true;
             }else{               
                 tw.WriteLine("permalink: /" + ImagesDirectory.Name + "/" + this.directoryName + ".html");
                 tw.WriteLine("title: /" + ImagesDirectory.Name + "/" +  this.directoryName );
@@ -128,11 +130,12 @@ namespace CSharp_Image_Action
             tw.WriteLine("# " + this.directoryName);
             tw.WriteLine();
             tw.WriteLine("----");
+            tw.WriteLine('<div class="image-container-' + this.directoryName + ' ImgContainer">');
             foreach(ImageDescriptor i in images)
             {
                 WriteImage( tw, i, Domain, ImagesDirectory);
             }
-            tw.WriteLine();
+            tw.WriteLine("</div>");
             tw.WriteLine("----");
             tw.WriteLine();
             foreach(DirectoryDescriptor d in Directories)
@@ -146,6 +149,13 @@ namespace CSharp_Image_Action
             tw.WriteLine();
             tw.WriteLine("----");
             tw.WriteLine();
+            //if(!DirectoryListing)
+            {
+                tw.WriteLine("<script>");
+                tw.WriteLine("{% include single-gallery.js %};");
+                tw.WriteLine('SetupGallery("image-container-' + this.directoryName + ' ImgContainer")');
+                tw.WriteLine("</script>");
+            }
             tw.WriteLine("{% include footer.md %}");
             tw.WriteLine();
             tw.Flush();
