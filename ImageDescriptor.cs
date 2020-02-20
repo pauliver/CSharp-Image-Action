@@ -107,11 +107,11 @@ namespace CSharp_Image_Action
             {
                 tw.WriteLine("permalink: /" + ImagesDirectory.Name + "/index.html");
                 tw.WriteLine("title: /" + ImagesDirectory.Name + "/index" );
-                tw.WriteLine("page_variable: " +  Domain  );
+                tw.WriteLine("page_variable: " +  this.directoryName  );
             }else{               
-                tw.WriteLine("permalink: /" + ImagesDirectory.Name + "/" +  Domain + ".html");
-                tw.WriteLine("title: /" + ImagesDirectory.Name + "/" +  Domain );
-                tw.WriteLine("page_variable: " +  ImagesDirectory.Name + Domain );
+                tw.WriteLine("permalink: /" + ImagesDirectory.Name + "/" + this.directoryName + ".html");
+                tw.WriteLine("title: /" + ImagesDirectory.Name + "/" +  this.directoryName );
+                tw.WriteLine("page_variable: " +  ImagesDirectory.Name + "/" +  this.directoryName );
             }         
             tw.WriteLine("----");
             
