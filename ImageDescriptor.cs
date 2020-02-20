@@ -130,7 +130,7 @@ namespace CSharp_Image_Action
             tw.WriteLine("# " + this.directoryName);
             tw.WriteLine();
             tw.WriteLine("----");
-            tw.WriteLine('<div class="image-container-' + this.directoryName + ' ImgContainer">');
+            tw.WriteLine("<div class=\"image-container-" + this.directoryName + " ImgContainer\">");
             foreach(ImageDescriptor i in images)
             {
                 WriteImage( tw, i, Domain, ImagesDirectory);
@@ -153,7 +153,7 @@ namespace CSharp_Image_Action
             {
                 tw.WriteLine("<script>");
                 tw.WriteLine("{% include single-gallery.js %};");
-                tw.WriteLine('SetupGallery("image-container-' + this.directoryName + ' ImgContainer")');
+                tw.WriteLine("SetupGallery(\"image-container-" + this.directoryName + " ImgContainer\")");
                 tw.WriteLine("</script>");
             }
             tw.WriteLine("{% include footer.md %}");
