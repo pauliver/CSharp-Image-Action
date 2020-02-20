@@ -155,7 +155,7 @@ namespace CSharp_Image_Action
                 tw.WriteLine();
                 tw.WriteLine("{% include single-gallery.js %};");
                 tw.WriteLine();
-                tw.WriteLine("SetupGallery(\"image-container-" + this.directoryName + " ImgContainer\");");
+                tw.WriteLine("SetupGallery(\".image-container-" + this.directoryName + " ImgContainer\");");
                 tw.WriteLine();
                 tw.WriteLine("</script>");
                 tw.WriteLine();
