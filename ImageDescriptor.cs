@@ -153,7 +153,7 @@ namespace CSharp_Image_Action
             {
                 tw.WriteLine("<script>");
                 tw.WriteLine();
-                tw.WriteLine("{% include single-gallery.js %};");
+                tw.WriteLine("{% include single-gallery.js %}");
                 tw.WriteLine();
                 tw.WriteLine("SetupGallery(\".image-container-" + this.directoryName + " ImgContainer\");");
                 tw.WriteLine();
