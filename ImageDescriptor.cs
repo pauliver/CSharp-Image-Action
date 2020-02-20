@@ -81,7 +81,7 @@ namespace CSharp_Image_Action
         {
             if(directoryName == ImagesDirectory.Name)
             {
-                indexfilename = new FileInfo(ImagesDirectory.FullName + "\\Index.md");
+                indexfilename = new FileInfo(ImagesDirectory.FullName + "\\index.md");
             }else{
                 indexfilename = new FileInfo(ImagesDirectory.FullName + "\\" + directoryName + ".md");
             }
