@@ -81,7 +81,7 @@ namespace CSharp_Image_Action
         {
             if(directoryName == ImagesDirectory.Name)
             {
-                indexfilename = new FileInfo(ImagesDirectory.FullName + "\\index.md");
+                indexfilename = new FileInfo(ImagesDirectory.FullName + "\\Index.md");
             }else{
                 indexfilename = new FileInfo(ImagesDirectory.FullName + "\\" + directoryName + ".md");
             }
@@ -116,6 +116,7 @@ namespace CSharp_Image_Action
             tw.WriteLine("----");
             
             tw.WriteLine();
+            tw.WriteLine();
             tw.WriteLine("{% include header.md %}");
             tw.WriteLine();
             
@@ -136,7 +137,7 @@ namespace CSharp_Image_Action
                 WriteDirectory( tw, d, ImagesDirectory);
             }
             tw.WriteLine();
-            tw.WriteLine("[Gallery]( ./index.html)"); 
+            tw.WriteLine("[Gallery]( ./Index.html)"); 
             tw.WriteLine("  or ");
             tw.WriteLine("[Home]( ../)");
             tw.WriteLine();
