@@ -105,12 +105,12 @@ namespace CSharp_Image_Action
             tw.WriteLine("---");
             if(directoryName == ImagesDirectory.Name)
             {
-                tw.WriteLine("permalink: /" + ImagesDirectory.Name + "/Index.html");
-                tw.WriteLine("title: Gallery: " + Domain );
+                tw.WriteLine("permalink: /" + ImagesDirectory.Name + "/index.html");
+                tw.WriteLine("title: Gallery - " + Domain );
                 tw.WriteLine("page_variable:" +  Domain  );
             }else{               
                 tw.WriteLine("permalink: /" + ImagesDirectory.Name + "//" +  Domain + ".html");
-                tw.WriteLine("title: Gallery: " + ImagesDirectory.Name + Domain );
+                tw.WriteLine("title: Gallery - " + ImagesDirectory.Name + Domain );
                 tw.WriteLine("page_variable: " +  ImagesDirectory.Name + Domain );
             }         
             tw.WriteLine("----");
