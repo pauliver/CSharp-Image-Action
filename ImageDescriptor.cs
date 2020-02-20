@@ -113,7 +113,10 @@ namespace CSharp_Image_Action
                 tw.WriteLine("title: /" + ImagesDirectory.Name + "/" +  this.directoryName );
                 tw.WriteLine("page_variable: " +  ImagesDirectory.Name + "/" +  this.directoryName );
             }         
-            tw.WriteLine("----");
+            
+            tw.WriteLine("Gallery_Page: " +  this.directoryName );
+            tw.WriteLine("Gallery_Name: " +  this.directoryName );
+            tw.WriteLine("---");
             
             tw.WriteLine();
             tw.WriteLine();
