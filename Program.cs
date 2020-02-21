@@ -215,9 +215,9 @@ namespace CSharp_Image_Action
 
                 Console.WriteLine("PR Created: " + PRname);
 
-                var issueUpdate = new IssueUpdate();
+                var issue = await github.Issue.Get(Owner,Repo, pullRequest.Number);
+                var issueUpdate = issue.ToUpdate();
                 issueUpdate.Labels.Add(AutoMergeLabel);
-                // pass in pr.Number below
                 var labeladded = await github.Issue.Update(Owner, Repo, pullRequest.Number, issueUpdate);
                 
                 Console.WriteLine("Label Added: " + AutoMergeLabel);
