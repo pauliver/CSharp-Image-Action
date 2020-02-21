@@ -215,12 +215,23 @@ namespace CSharp_Image_Action
 
                 Console.WriteLine("PR Created: " + PRname);
 
-                var issue = await github.Issue.Get(Owner,Repo, pullRequest.Number);
-                var issueUpdate = issue.ToUpdate();
-                issueUpdate.Labels.Add(AutoMergeLabel);
-                var labeladded = await github.Issue.Update(Owner, Repo, pullRequest.Number, issueUpdate);
-                
-                Console.WriteLine("Label Added: " + AutoMergeLabel);
+                try{
+                    
+                    Console.WriteLine("Owner: " + PRname);        
+                    Console.WriteLine("Repo: " + Repo);
+                    Console.WriteLine("pullRequest.Number: " + pullRequest.Number);
+
+                    var issue = await github.Issue.Get(Owner, Repo, pullRequest.Number);
+                    var issueUpdate = issue.ToUpdate();
+                    issueUpdate.Labels.Add(AutoMergeLabel);
+                    var labeladded = await github.Issue.Update(Owner, Repo, pullRequest.Number, issueUpdate);
+                    
+                    Console.WriteLine("Label Added: " + AutoMergeLabel);
+
+                }catch(Exception ex){
+                {
+                    Console.WriteLine(ex.ToString());   
+                }
 
                 Console.WriteLine("Bailing Out...");
             }
