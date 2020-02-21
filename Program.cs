@@ -209,7 +209,7 @@ namespace CSharp_Image_Action
                 Console.WriteLine("TargetBranch: " + GHPages);
 
                 NewPullRequest newPr = new NewPullRequest(PRname,CurrentBranch,GHPages);
-                PullRequest pullRequest = await github.PullRequest.Create(Owner,PRname,newPr);
+                PullRequest pullRequest = await github.PullRequest.Create(Owner,Repo,newPr);
                 
                 Console.WriteLine("PR Created # : " + pullRequest.Number);
 
