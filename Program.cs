@@ -216,7 +216,7 @@ namespace CSharp_Image_Action
                 Console.WriteLine("PR Created: " + PRname);
 
                 try{
-                    
+
                     Console.WriteLine("Owner: " + PRname);        
                     Console.WriteLine("Repo: " + Repo);
                     Console.WriteLine("pullRequest.Number: " + pullRequest.Number);
@@ -229,7 +229,6 @@ namespace CSharp_Image_Action
                     Console.WriteLine("Label Added: " + AutoMergeLabel);
 
                 }catch(Exception ex){
-                {
                     Console.WriteLine(ex.ToString());   
                 }
 
