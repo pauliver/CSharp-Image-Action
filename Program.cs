@@ -3,6 +3,9 @@ using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using GraphQL;
+using GraphQLParser;
+using Octokit;
 
 namespace CSharp_Image_Action
 {
@@ -13,15 +16,72 @@ namespace CSharp_Image_Action
         public static string THUMBNAILS = "Thumbnails";
         public static string GENERATED = "\\Generated";
 
-        static void Main(string[] args)
+        static async System.Threading.Tasks.Task Main(string[] args)
         {
+            if(args.Length < 3)
+            {
+                Console.WriteLine("need atleast 3 args");
+                return;
+            }
+            string[] extensionList = new string[]{".jpg",".png",".jpeg", ".JPG", ".PNG", ".JPEG", ".nef", ".NEF"};
+            System.IO.DirectoryInfo ImagesDirectory;
+            System.IO.DirectoryInfo RepoDirectory; 
+            System.IO.FileInfo fi;
+            bool CleanlyLoggedIn = false;
+            GitHubClient github = null;
+
+           
+            var CurrentBranch = "master";
+            var GHPages = "gh-pages";
+            var AutoMergeLabel = "automerge";
+            var Repo = "Repo";
+            var Owner = "Owner";
+
             var ImgDir = args[0];
             var jsonPath = args[1] + "\\" + Jekyll_data_Folder + "\\" + Jekyll_data_File;
             var repopath = args[1];
             var domain = args[2];
-            System.IO.DirectoryInfo ImagesDirectory;
-            System.IO.DirectoryInfo RepoDirectory; 
-            System.IO.FileInfo fi;
+
+            var GitHubStuff = false;
+            if(args.Length >= 4 && args[3] is string && bool.Parse(args[3]))
+            {
+                GitHubStuff = bool.Parse(args[3]);
+            }
+                        if(GitHubStuff)
+            {
+                try{
+                    Console.WriteLine("Loading github...");
+                    string secretkey = Environment.GetEnvironmentVariable("GITHUB_TOKEN");
+                    github = new GitHubClient(new ProductHeaderValue("Pauliver-ImageTool"))
+                    {
+                        Credentials = new Credentials(secretkey)
+                    };
+                    CleanlyLoggedIn = true; // or maybe
+                    Console.WriteLine("... Loaded");
+                }catch(Exception ex){
+                    Console.WriteLine(ex.ToString());
+                    Console.WriteLine("... Loading Failed");
+                    CleanlyLoggedIn = false;
+                }
+            }
+
+            if(GitHubStuff)
+            {
+                Repo = args[4] as string;
+                Owner = args[5] as string;
+                if(args.Length >= 7 && args[6] is string)
+                {
+                    CurrentBranch = args[6] as string;
+                }
+                if(args.Length >= 8 && args[7] is string)
+                {
+                    GHPages = args[7] as string;
+                }
+                if(args.Length >= 9 && args[8] is string)
+                {
+                    AutoMergeLabel = args[8] as string;
+                }
+            }
             if(repopath is string || repopath as string != null)
             {
                 RepoDirectory = new System.IO.DirectoryInfo(repopath as string);
@@ -65,15 +125,13 @@ namespace CSharp_Image_Action
                 Console.WriteLine("Directory [" + ImgDir + "] Doesn't exist");
                 return;
             }
-
             if(!(domain is string))
             {
                 Console.WriteLine("arg 3 needs to be your domain");
             }
 
-
-            string[] extensionList = new string[]{".jpg",".png",".jpeg", ".JPG", ".PNG", ".JPEG", ".nef", ".NEF"};
             DirectoryDescriptor DD = new DirectoryDescriptor(ImagesDirectory.Name, ImagesDirectory.FullName);
+
             // Traverse Image Directory
             ImageHunter ih = new ImageHunter(ref DD,ImagesDirectory,extensionList);
 
@@ -83,6 +141,7 @@ namespace CSharp_Image_Action
             var ImagesList = ih.ImageList;
 
             System.IO.DirectoryInfo thumbnail = new System.IO.DirectoryInfo(ImgDir + "\\" + THUMBNAILS);
+
             if(!thumbnail.Exists)
                 thumbnail.Create();
 
@@ -108,11 +167,7 @@ namespace CSharp_Image_Action
             
             DD.SaveMDFiles(domain, ImagesDirectory);
             Console.WriteLine("Image indexes written");
-            //https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-how-to
-            // Generate 1 sets of json to save (1 deep tree?)
-            // -> Gallery structure Gallery needs a thumbnail, and a name
-            //   -> we probably need to generate a markdown page for it too... 
-            //      -> Can hide more structure in the markdown page
+
 
             var encoderSettings = new TextEncoderSettings();
             encoderSettings.AllowCharacters('\u0436', '\u0430');
@@ -133,6 +188,33 @@ namespace CSharp_Image_Action
                 //fs.Close();    
             }
             Console.WriteLine("Json written");
+
+            Console.WriteLine(" --- ");
+
+            if(GitHubStuff)
+            {
+                if(!CleanlyLoggedIn)
+                {
+                    Console.WriteLine("GitHub Login State unclear, Exiting");
+                    return;
+                }
+                string PRname = "From " + CurrentBranch + " to " + GHPages; 
+                NewPullRequest newPr = new NewPullRequest(PRname,CurrentBranch,GHPages);
+                PullRequest pullRequest = await github.PullRequest.Create(Owner,PRname,newPr);
+                
+                Console.WriteLine("PR Created # : " + pullRequest.Number);
+
+                Console.WriteLine("PR Created: " + PRname);
+
+                var issueUpdate = new IssueUpdate();
+                issueUpdate.Labels.Add(AutoMergeLabel);
+                // pass in pr.Number below
+                var labeladded = await github.Issue.Update(Owner, Repo, pullRequest.Number, issueUpdate);
+                
+                Console.WriteLine("Label Added: " + AutoMergeLabel);
+
+                Console.WriteLine("Bailing Out...");
+            }
         }
     }
 }
