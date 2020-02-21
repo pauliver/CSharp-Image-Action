@@ -47,7 +47,8 @@ namespace CSharp_Image_Action
             {
                 GitHubStuff = bool.Parse(args[3]);
             }
-                        if(GitHubStuff)
+            
+            if(GitHubStuff)
             {
                 try{
                     Console.WriteLine("Loading github...");
@@ -198,7 +199,15 @@ namespace CSharp_Image_Action
                     Console.WriteLine("GitHub Login State unclear, Exiting");
                     return;
                 }
+                    
+                
                 string PRname = "From " + CurrentBranch + " to " + GHPages; 
+                
+                Console.WriteLine("PR: " + PRname);
+                Console.WriteLine("Owner: " + Owner);
+                Console.WriteLine("CurrentBranch: " + CurrentBranch);
+                Console.WriteLine("TargetBranch: " + GHPages);
+
                 NewPullRequest newPr = new NewPullRequest(PRname,CurrentBranch,GHPages);
                 PullRequest pullRequest = await github.PullRequest.Create(Owner,PRname,newPr);
                 
