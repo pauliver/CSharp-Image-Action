@@ -213,7 +213,10 @@ namespace CSharp_Image_Action
                 
                 Console.WriteLine("PR Created # : " + pullRequest.Number);
 
-                Console.WriteLine("PR Created: " + PRname);
+                Console.WriteLine("PR Created: " + pullRequest.Title);
+
+                //var prupdate = new PullRequestUpdate();
+                //var newUpdate = await github.PullRequest.Update(Owner,Repo,pullRequest.Number,prupdate);
 
                 try{
 
@@ -232,10 +235,13 @@ namespace CSharp_Image_Action
                     if(issue != null) //https://octokitnet.readthedocs.io/en/latest/issues/
                     {
                         var issueUpdate = issue.ToUpdate();
-                        issueUpdate.Labels.Add(AutoMergeLabel);
-                        var labeladded = await github.Issue.Update(Owner, Repo, pullRequest.Number, issueUpdate);
+                        if(issueUpdate != null)
+                        {
+                            issueUpdate.AddLabel(AutoMergeLabel);
+                            var labeladded = await github.Issue.Update(Owner, Repo, pullRequest.Number, issueUpdate);
+                            Console.WriteLine("Label Added: " + AutoMergeLabel);
+                        }
                     }
-                    Console.WriteLine("Label Added: " + AutoMergeLabel);
 
                 }catch(Exception ex){
                     Console.WriteLine(ex.ToString());   
