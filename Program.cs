@@ -229,10 +229,12 @@ namespace CSharp_Image_Action
                     }
 
                     var issue = await github.Issue.Get(Owner, Repo, pullRequest.Number);
-                    var issueUpdate = issue.ToUpdate();
-                    issueUpdate.Labels.Add(AutoMergeLabel);
-                    var labeladded = await github.Issue.Update(Owner, Repo, pullRequest.Number, issueUpdate);
-                    
+                    if(issue != null) //https://octokitnet.readthedocs.io/en/latest/issues/
+                    {
+                        var issueUpdate = issue.ToUpdate();
+                        issueUpdate.Labels.Add(AutoMergeLabel);
+                        var labeladded = await github.Issue.Update(Owner, Repo, pullRequest.Number, issueUpdate);
+                    }
                     Console.WriteLine("Label Added: " + AutoMergeLabel);
 
                 }catch(Exception ex){
