@@ -131,6 +131,7 @@ namespace CSharp_Image_Action
                 Console.WriteLine("arg 3 needs to be your domain");
             }
 
+
             DirectoryDescriptor DD = new DirectoryDescriptor(ImagesDirectory.Name, ImagesDirectory.FullName);
 
             // Traverse Image Directory
@@ -189,6 +190,28 @@ namespace CSharp_Image_Action
                 //fs.Close();    
             }
             Console.WriteLine("Json written");
+
+            if(false)
+            {
+                Console.WriteLine(" -- Merge new files -- ");
+
+                try{
+                    using (var repo = new LibGit2Sharp.Repository(RepoDirectory.FullName) )
+                    {
+                        //LibGit2Sharp.Commit commit = repo.Head.Tip;
+                        LibGit2Sharp.Commands.Stage(repo, "*");
+                        repo.Index.Write();
+                        
+                        LibGit2Sharp.Signature committer = new LibGit2Sharp.Signature("GitHub Action", "actions@users.noreply.github.com", DateTime.Now);
+
+                        // Commit to the repository
+                        LibGit2Sharp.Commit commit = repo.Commit("Add resized images", committer, committer, new LibGit2Sharp.CommitOptions());
+                    }
+                }catch(Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            }
 
             Console.WriteLine(" --- ");
 
