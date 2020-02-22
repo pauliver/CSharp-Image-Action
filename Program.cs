@@ -221,6 +221,13 @@ namespace CSharp_Image_Action
                     Console.WriteLine("Repo: " + Repo);
                     Console.WriteLine("pullRequest.Number: " + pullRequest.Number);
 
+                    if(github == null){  
+                        Console.WriteLine("github == null");
+                    }
+                    if(github.Issue == null){
+                        Console.WriteLine("github.Issue == null");
+                    }
+
                     var issue = await github.Issue.Get(Owner, Repo, pullRequest.Number);
                     var issueUpdate = issue.ToUpdate();
                     issueUpdate.Labels.Add(AutoMergeLabel);
