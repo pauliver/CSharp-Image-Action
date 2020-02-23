@@ -23,7 +23,7 @@ namespace CSharp_Image_Action
                 Console.WriteLine("need atleast 3 args");
                 return;
             }
-            string[] extensionList = new string[]{".jpg",".png",".jpeg", ".JPG", ".PNG", ".JPEG", ".nef", ".NEF"};
+            string[] extensionList = new string[]{".jpg",".png",".jpeg", ".JPG", ".PNG", ".JPEG", ".bmp", ".BMP"};
             System.IO.DirectoryInfo ImagesDirectory;
             System.IO.DirectoryInfo RepoDirectory; 
             System.IO.FileInfo fi;
