@@ -153,15 +153,18 @@ namespace CSharp_Image_Action
 
             foreach(ImageDescriptor id in ImagesList)
             {
-                System.Console.WriteLine("Image: " +  id.Name);
-                id.FillBasicInfo();
+                try{
+                    System.Console.WriteLine("Image: " +  id.Name);
+                    id.FillBasicInfo();
 
-                if(ir.ThumbnailNeeded(id))
-                    ir.GenerateThumbnail(id);
+                    if(ir.ThumbnailNeeded(id))
+                        ir.GenerateThumbnail(id);
 
-                if(ir.NeedsResize(id)) // when our algorithm gets better, or or image sizes change
-                    ir.ResizeImages(id);
-
+                    if(ir.NeedsResize(id)) // when our algorithm gets better, or or image sizes change
+                        ir.ResizeImages(id);
+                }catch(Exception ex){
+                    Console.WriteLine(ex.ToString());   
+                }
             }
             Console.WriteLine("Images have been resized");
 
