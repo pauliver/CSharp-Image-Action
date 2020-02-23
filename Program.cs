@@ -153,6 +153,7 @@ namespace CSharp_Image_Action
 
             foreach(ImageDescriptor id in ImagesList)
             {
+                System.Console.WriteLine("Image: " +  id.Name);
                 id.FillBasicInfo();
 
                 if(ir.ThumbnailNeeded(id))
