@@ -18,12 +18,20 @@ namespace CSharp_Image_Action
             public bool BiasForLongEdge;
             public bool PreserveRatio;
 
+            public bool PreserveHeight;
+
             public Box(int width,int height, bool preserveratio = true,bool biasforlongedge = true)
             {
                 this.Width = width;
                 this.Height = height;
                 this.BiasForLongEdge = biasforlongedge;
                 this.PreserveRatio = preserveratio;
+                if(biasforlongedge)
+                {
+                    this.PreserveHeight = false;
+                }else{
+                    this.PreserveHeight = true;
+                }
             }
         }
 
@@ -102,6 +110,7 @@ namespace CSharp_Image_Action
                 {
                     retval = true;
                 }else{
+                    // The option here should bias for the height of the image and not .BiasForLongEdge (for panorama's that are now going to be 2 pixels tall)
                     System.Console.WriteLine("that else you never wrote, yeah.. you hit it");
                     //didn't finsih this logic
                 }
