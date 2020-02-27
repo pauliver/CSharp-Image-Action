@@ -226,16 +226,50 @@ namespace CSharp_Image_Action
                     Console.WriteLine("GitHub Login State unclear, Exiting");
                     return;
                 }
-                    
                 
-                string PRname = "From " + CurrentBranch + " to " + GHPages; 
+                string PRname = "From " + CurrentBranch + " to " + GHPages;
+                /*
+                string MergeLabel = "autolabel";
+                bool shouldmerge = false;
+
+                var prs = await github.PullRequest.GetAllForRepository(Owner,Repo);
+                
+                foreach(PullRequest pr in prs)
+                {
+                    foreach(Label l in pr.Labels)
+                    {
+                        if(l.Name == MergeLabel)
+                        {
+                            shouldmerge = true;
+                        }
+                        if(pr.Title.Contains(PRname))
+                        {
+                            shouldmerge = true;
+                        }
+                        if(shouldmerge)
+                        {
+                            MergePullRequest mpr = new MergePullRequest();
+                            mpr.CommitMessage = "Time's up, let's do this";
+                            mpr.MergeMethod = PullRequestMergeMethod.Merge;
+                            
+                            var merge = await github.PullRequest.Merge(Owner,Repo,pr.Number,mpr);
+                            if(merge.Merged)
+                            {
+                                Console.WriteLine("successfully Merged");
+                            }else{
+                                Console.WriteLine("Merge Failed");
+                            }
+                        }
+                    }
+                }
+                */
                 
                 Console.WriteLine("PR: " + PRname);
                 Console.WriteLine("Owner: " + Owner);
                 Console.WriteLine("CurrentBranch: " + CurrentBranch);
                 Console.WriteLine("TargetBranch: " + GHPages);
 
-                NewPullRequest newPr = new NewPullRequest(PRname,CurrentBranch,GHPages);
+                NewPullRequest newPr = new NewPullRequest(PRname + " : " + System.DateTime.UtcNow.ToString(),CurrentBranch,GHPages);
                 PullRequest pullRequest = await github.PullRequest.Create(Owner,Repo,newPr);
                 
                 Console.WriteLine("PR Created # : " + pullRequest.Number);
