@@ -8,18 +8,11 @@ Working on an Action to resize images, make thumbnails, etc.. using .net core 3.
 
 Clone this [Template Repo](https://github.com/pauliver/Photo-Gallery-Template)
 
-**below here is outdated info**
+
 --------
 
-*OutDated as of 2/22/20 - need to protect branch, when they match the script nukes it.. not helpful*
-
-[This folder](https://github.com/pauliver/CSharp-Image-Action/tree/master/SampleWebsite) has a complete copy of everything you need to use this elsewhere 
-
-
-#### Example Usage of the .json file through Liquid and GitHub Markdown
-
-```markdown
-
+```md
+Example Usage of the .json file through Liquid and GitHub Markdown
  # Gallery
 {% for gallery in site.data.galleryjson.PhotoGalleries %}
 ## [{{gallery.GalleryName}}]({{gallery.FullDirectoryPath}})
@@ -41,24 +34,29 @@ Clone this [Template Repo](https://github.com/pauliver/Photo-Gallery-Template)
 {% endfor %}
 ```
 
-#### Example .yml file to build it
-
+Check out the lastest build script it uses: from [Here](http://github.com/pauliver/Photo-Gallery-Template/blob/master/.github/workflows/main.yml)
 ```yml
 name: Create Thumbnails, Compressed images, Build Jekyll Site, Branch to Release on Success
 env:
-  URL: "example.com"
+  URL: "pauliver.github.io/Photo-Gallery-Template/"
   AutoMergeLabel: "automerge"
   GHPages: "gh-pages"
   CurrentBranch: "master"
-  Repo: "CSharp-Image-Action"
+  Repo: "Photo-Gallery-Template"
   Owner: "pauliver"
-  # https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables#default-environment-variables
+  
 
 on:
   push:
-    branches: [master]
+    paths-ignore:
+      - '_data/galleryjson.json'
+      - '_includes/gallery.json'
+    branches:   
+      - master
 # page_build: # Pretty sure this was triggering endlessly
   pull_request:
+    tags-ignore:
+      - automerge
     paths:
       - '**.jpg'
       - '**.jpeg'
@@ -95,12 +93,13 @@ jobs:
         run: dotnet build ImgTools/ --configuration Release
       
       - name: Run the Image Tools
-        run: dotnet  ${{github.workspace}}\ImgTools\bin\Release\netcoreapp3.1\CSharp-Image-Action.dll  ${{github.workspace}}\main\gallery\ ${{github.workspace}}\main\ https://${{env.URL}}
+        run: dotnet  ${{github.workspace}}\ImgTools\bin\Release\netcoreapp3.1\CSharp-Image-Action.dll  ${{github.workspace}}\main\gallery\ ${{github.workspace}}\main\ https://${{env.URL}} 
 
       - name: Commit the resized files and .json
         run: |
           git config --local user.email "actions@users.noreply.github.com"
           git config --local user.name "GitHub Action"
+          cp ./_data/galleryjson.json ./_includes/gallery.json
           git add *
           git commit -m "Add resized images" -a
         working-directory: main 
@@ -110,6 +109,12 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           directory: main   
+      
+      - name: Build the Pull Request (hopefully)
+        run: dotnet  ${{github.workspace}}\ImgTools\bin\Release\netcoreapp3.1\CSharp-Image-Action.dll  ${{github.workspace}}\main\gallery\ ${{github.workspace}}\main\ https://${{env.URL}} True ${{env.Repo}} ${{env.Owner}} ${{env.CurrentBranch}} ${{env.GHPages}} ${{env.AutoMergeLabel}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
   build_jekyll_site:
     name: Build the site in the jekyll/builder container
     needs: process_images
@@ -124,41 +129,30 @@ jobs:
           docker run \
           -v ${{ github.workspace }}:/srv/jekyll -v ${{ github.workspace }}/_site:/srv/jekyll/_site \
           jekyll/builder:latest /bin/bash -c "chmod 777 /srv/jekyll && jekyll build --future"
-  create_pr_if_success:
-    name: Create PR to gh-pages if everything works
-    needs: [process_images, build_jekyll_site]
-    runs-on: [ubuntu-latest]
-    strategy:
-      matrix:
-        dotnet: [ '3.1.100' ]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          path: main
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v2.4.1 #https://github.com/marketplace/actions/create-pull-request
-        with:
-          path: main
-          base: ${{env.CurrentBranch}}
-          branch: ${{env.GHPages}}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "tests all passed, creating PR for ${{env.GHPages}}"
-          labels: ${{env.AutoMergeLabel}}
+ 
   merge_pr_if_sucess:
     name: Merge the PR we created
-    needs: [create_pr_if_success]
-    runs-on: [ubuntu-latest]
+    needs: [process_images, build_jekyll_site]
+    runs-on: [windows-latest]
     strategy:
       matrix:
         dotnet: [ '3.1.100' ]
     steps:
-      - name: automerge
-        uses: "pascalgn/automerge-action@ecb16453ce68e85b1e23596c8caa7e7499698a84"
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ matrix.dotnet }}
+      - name: Checkout Merge Tool
+        uses: actions/checkout@v2
+        with:
+          repository: pauliver/Merge-Pull-Request-Csharp
+          path: MergeTool
+
+      - name: Build merge tool Tools
+        run: dotnet build MergeTool/ --configuration Release
+      
+      - name: Run the MergeTool Tools
+        run: dotnet  ${{github.workspace}}\MergeTool\bin\Release\netcoreapp3.1\Merge-Pull-Request.dll ${{env.Owner}} ${{env.Repo}} ${{env.AutoMergeLabel}}
         env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          MERGE_LABELS: ${{env.AutoMergeLabel}},"!work in progress"
-          MERGE_REMOVE_LABELS: ${{env.AutoMergeLabel}}
-          MERGE_DELETE_BRANCH: false	
-          UPDATE_METHOD: "merge"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
