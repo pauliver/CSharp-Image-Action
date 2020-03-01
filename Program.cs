@@ -228,9 +228,8 @@ namespace CSharp_Image_Action
                 }
                 
                 string PRname = "From " + CurrentBranch + " to " + GHPages;
-                /*
-                string MergeLabel = "autolabel";
-                bool shouldmerge = false;
+                
+                bool ShouldClose = false;
 
                 var prs = await github.PullRequest.GetAllForRepository(Owner,Repo);
                 
@@ -238,31 +237,18 @@ namespace CSharp_Image_Action
                 {
                     foreach(Label l in pr.Labels)
                     {
-                        if(l.Name == MergeLabel)
+                        if(l.Name == AutoMergeLabel && pr.Title.Contains(PRname)) // I'm left over from a previous run
                         {
-                            shouldmerge = true;
+                            ShouldClose = true;
                         }
-                        if(pr.Title.Contains(PRname))
+                        if(ShouldClose)
                         {
-                            shouldmerge = true;
-                        }
-                        if(shouldmerge)
-                        {
-                            MergePullRequest mpr = new MergePullRequest();
-                            mpr.CommitMessage = "Time's up, let's do this";
-                            mpr.MergeMethod = PullRequestMergeMethod.Merge;
-                            
-                            var merge = await github.PullRequest.Merge(Owner,Repo,pr.Number,mpr);
-                            if(merge.Merged)
-                            {
-                                Console.WriteLine("successfully Merged");
-                            }else{
-                                Console.WriteLine("Merge Failed");
-                            }
+                            Console.WriteLine("It looks like you have an existing PR still open");
+                            Console.WriteLine("This is likely to fail, unless you close : " + pr.Title);
                         }
                     }
                 }
-                */
+                
                 
                 Console.WriteLine("PR: " + PRname);
                 Console.WriteLine("Owner: " + Owner);
