@@ -3,7 +3,7 @@ name: Build .NET Core App
 on: [push]
 
 jobs:
-  build:
+  build-the-thing:
     runs-on: ubuntu-latest
     strategy:
       matrix:
