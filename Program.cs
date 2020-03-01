@@ -237,6 +237,7 @@ namespace CSharp_Image_Action
                 {
                     foreach(Label l in pr.Labels)
                     {
+                        ShouldClose = false;
                         if(l.Name == AutoMergeLabel && pr.Title.Contains(PRname)) // I'm left over from a previous run
                         {
                             ShouldClose = true;
@@ -246,6 +247,7 @@ namespace CSharp_Image_Action
                             Console.WriteLine("It looks like you have an existing PR still open");
                             Console.WriteLine("This is likely to fail, unless you close : " + pr.Title);
                         }
+                        ShouldClose = false;
                     }
                 }
                 
