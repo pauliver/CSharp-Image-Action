@@ -1,18 +1,6 @@
 
-# Sample Website
 
-The Sample website consists of 3 files and a few folders
-- actions .yml file
-- generated .json file
-- folder to put your images in
-- Ondex.md 
+DON"T USE THIS ANYMORE - GO HERE instead
 
-# Actions .yml file
 
-# generated galleryjson.json file
-
-# Folder to put the images in 
-
-# Index.md 
-
-The Index file 
+https://github.com/pauliver/Photo-Gallery-Template
