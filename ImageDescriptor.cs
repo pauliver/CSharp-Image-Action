@@ -34,7 +34,7 @@ namespace CSharp_Image_Action
         public string IndexFileName { get => "/" + indexfilename.FullName.Replace(GitHubRepoRoot.FullName,"").Replace("\\","/"); }
         protected System.IO.FileInfo indexfilename;
         
-        [JsonPropertyName("ImageThumbnail")]
+        [JsonPropertyName("GalleryThumbnail")]
         public string ImageThumbnail { get; set; }
         
         [JsonPropertyName("PhotoGalleries")] //JsonExtensionData
