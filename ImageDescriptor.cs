@@ -35,7 +35,7 @@ namespace CSharp_Image_Action
         protected System.IO.FileInfo indexfilename;
         
         [JsonPropertyName("GalleryThumbnail")]
-        public string ImageThumbnail { get; set; }
+        public string GalleryThumbnail { get; set; }
         
         [JsonPropertyName("PhotoGalleries")] //JsonExtensionData
         public List<DirectoryDescriptor> Directories { get => directories; set => directories = value; }
@@ -70,8 +70,8 @@ namespace CSharp_Image_Action
                 i.FixUpPaths(di);
                 if(first || i.Name.ToLower().StartsWith("thumbnail"))
                 {
+                    GalleryThumbnail = i.JSON_ThumbnailFile;
                     first = false; // we need to have a thumbnail, so it's the first image
-                    ImageThumbnail = i.JSON_ThumbnailFile;
                 }
             }
         }
@@ -101,7 +101,7 @@ namespace CSharp_Image_Action
         public void CreateIndexFile(System.IO.FileInfo fi, string Domain, System.IO.DirectoryInfo ImagesDirectory)
         {
             System.IO.TextWriter tw = fi.CreateText();
-            bool DirectoryListing = false;
+            //bool DirectoryListing = false;
             
             tw.WriteLine("---");
             if(directoryName == ImagesDirectory.Name)
@@ -109,7 +109,7 @@ namespace CSharp_Image_Action
                 tw.WriteLine("permalink: /" + ImagesDirectory.Name + "/index.html");
                 tw.WriteLine("title: /" + ImagesDirectory.Name + "/index" );
                 tw.WriteLine("page_variable: " +  this.directoryName  );
-                DirectoryListing = true;
+                //DirectoryListing = true;
             }else{               
                 tw.WriteLine("permalink: /" + ImagesDirectory.Name + "/" + this.directoryName + ".html");
                 tw.WriteLine("title: /" + ImagesDirectory.Name + "/" +  this.directoryName );
@@ -178,9 +178,9 @@ namespace CSharp_Image_Action
         {
             textWriter.WriteLine("### [" + dd.directoryName + "]( ./"+ dd.indexfilename.Name.Replace(".md",".html") + ")"); 
 
-            if(dd.ImageThumbnail != null)
+            if(dd.GalleryThumbnail != null)
             {
-                var inlinelater =  dd.ImageThumbnail.Replace(ImagesDirectory.Name,"").Replace(@"\","/");
+                var inlinelater =  dd.GalleryThumbnail.Replace(ImagesDirectory.Name,"").Replace(@"\","/");
 
                 textWriter.WriteLine("[ ![" +  dd.directoryName +  "-Thumbnail](" + inlinelater + ")]( ./"+ dd.indexfilename.Name.Replace(".md",".html") + ")"); 
             }

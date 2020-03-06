@@ -195,7 +195,7 @@ namespace CSharp_Image_Action
             }
             Console.WriteLine("Json written");
 
-            if(false)
+            /*if(false)
             {
                 Console.WriteLine(" -- Merge new files -- ");
 
@@ -215,7 +215,7 @@ namespace CSharp_Image_Action
                 {
                     Console.WriteLine(ex);
                 }
-            }
+            }*/
 
             Console.WriteLine(" --- ");
 
