@@ -111,7 +111,6 @@ namespace CSharp_Image_Action
             var imgBase64 = Convert.ToBase64String(File.ReadAllBytes(fi.FullName));
             // Create image blob
             var imgBlob = new NewBlob { Encoding = EncodingType.Base64, Content = (imgBase64) };
-            //var imgBlobRef = await github.Git.Blob.Update(owner, repo, imgblob);
             var imgBlobRef = await github.Git.Blob.Create(owner, repo, imgBlob);
 
             UpdatedTree.Tree.Add(new NewTreeItem { Path = fi.FullName.Replace(repoDirectory.FullName,""), Mode = "100644", Type = TreeType.Blob, Sha = imgBlobRef.Sha });
@@ -131,7 +130,7 @@ namespace CSharp_Image_Action
         {
             try{
                 var newTree = await github.Git.Tree.Create(owner, repo, UpdatedTree);
-                var newCommit = new NewCommit("Commit test with several files", newTree.Sha, masterReference.Object.Sha);
+                var newCommit = new NewCommit("Updated Images and json files", newTree.Sha, masterReference.Object.Sha);
                 var commit = await github.Git.Commit.Create(owner, repo, newCommit);
                 var headMasterRef = "heads/master";
                 // Update HEAD with the commit

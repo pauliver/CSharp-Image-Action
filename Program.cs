@@ -223,9 +223,12 @@ namespace CSharp_Image_Action
                 Console.WriteLine(" --- ");
             }
                 //https://laedit.net/2016/11/12/GitHub-commit-with-Octokit-net.html
+
             {
                 Console.WriteLine("now to push to master");
 
+                await github.CommitAndPush();
+                
                 Console.WriteLine(" --- ");
             }
 
