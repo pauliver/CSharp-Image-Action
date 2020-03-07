@@ -88,7 +88,7 @@ namespace CSharp_Image_Action
             return AddorUpdateFile(fi);
         }
 
-        public async ValueTasks<Boolean> FindStalePullRequests(string PRname)
+        public async ValueTask<Boolean> FindStalePullRequests(string PRname)
         {
             bool ShouldClose = false;
 
@@ -114,7 +114,7 @@ namespace CSharp_Image_Action
             return true;
         }
 
-        async public ValueTasks<bool> CreateAndLabelPullRequest(string PRname)
+        async public ValueTask<bool> CreateAndLabelPullRequest(string PRname)
         {
             Console.WriteLine("PR: " + PRname);
             Console.WriteLine("Owner: " + owner);
