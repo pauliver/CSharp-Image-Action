@@ -3,8 +3,6 @@ using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using GraphQL;
-using GraphQLParser;
 using Octokit;
 
 namespace CSharp_Image_Action
@@ -16,8 +14,19 @@ namespace CSharp_Image_Action
         public static string THUMBNAILS = "Thumbnails";
         public static string GENERATED = "\\Generated";
 
+        // Tweak this over time
+        // - if we have 2 threads per processor
+        // - and spend a lot of time in File IO
+        // - we can accomidate for it here
+        public static int ThreadsPerProcessor = 4;
+
         static async System.Threading.Tasks.Task Main(string[] args)
         {
+            // Processors not cores, probably need something else in the future
+            int ProcessorCount = Environment.ProcessorCount;
+
+            int NumThreadsToRun = ThreadsPerProcessor * ProcessorCount;
+
             if(args.Length < 3)
             {
                 Console.WriteLine("need atleast 3 args");
