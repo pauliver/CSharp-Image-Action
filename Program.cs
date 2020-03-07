@@ -22,6 +22,7 @@ namespace CSharp_Image_Action
 
         static async System.Threading.Tasks.Task Main(string[] args)
         {
+            PaulsOKWrapper github;
             // Processors not cores, probably need something else in the future
             int ProcessorCount = Environment.ProcessorCount;
 
@@ -34,10 +35,7 @@ namespace CSharp_Image_Action
             }
             string[] extensionList = new string[]{".jpg",".png",".jpeg", ".JPG", ".PNG", ".JPEG", ".bmp", ".BMP"};
             System.IO.DirectoryInfo ImagesDirectory;
-            System.IO.DirectoryInfo RepoDirectory; 
             System.IO.FileInfo fi;
-            bool CleanlyLoggedIn = false;
-            GitHubClient github = null;
 
            
             var CurrentBranch = "master";
@@ -57,44 +55,38 @@ namespace CSharp_Image_Action
                 GitHubStuff = bool.Parse(args[3]);
             }
             
+            github = new PaulsOKWrapper(GitHubStuff);
             if(GitHubStuff)
             {
-                try{
-                    Console.WriteLine("Loading github...");
-                    string secretkey = Environment.GetEnvironmentVariable("GITHUB_TOKEN");
-                    github = new GitHubClient(new ProductHeaderValue("Pauliver-ImageTool"))
-                    {
-                        Credentials = new Credentials(secretkey)
-                    };
-                    CleanlyLoggedIn = true; // or maybe
-                    Console.WriteLine("... Loaded");
-                }catch(Exception ex){
-                    Console.WriteLine(ex.ToString());
-                    Console.WriteLine("... Loading Failed");
-                    CleanlyLoggedIn = false;
-                }
+                github.AttemptLogin();
             }
 
-            if(GitHubStuff)
+            if(GitHubStuff && github.CleanlyLoggedIn)
             {
-                Repo = args[4] as string;
-                Owner = args[5] as string;
-                if(args.Length >= 7 && args[6] is string)
-                {
-                    CurrentBranch = args[6] as string;
+                {// Setup the Owner and the Repo
+                    Repo = args[4] as string;
+                    Owner = args[5] as string;
+                    github.SetOwnerAndRepo(Owner,repopath);
                 }
-                if(args.Length >= 8 && args[7] is string)
-                {
-                    GHPages = args[7] as string;
-                }
-                if(args.Length >= 9 && args[8] is string)
-                {
-                    AutoMergeLabel = args[8] as string;
+                {// Setup for merge between branches by label
+                    if(args.Length >= 7 && args[6] is string)
+                    {
+                        CurrentBranch = args[6] as string;
+                    }
+                    if(args.Length >= 8 && args[7] is string)
+                    {
+                        GHPages = args[7] as string;
+                    }
+                    if(args.Length >= 9 && args[8] is string)
+                    {
+                        AutoMergeLabel = args[8] as string;
+                    }
+                    github.SetupForMergesByLabel(AutoMergeLabel,CurrentBranch,GHPages);
                 }
             }
             if(repopath is string || repopath as string != null)
             {
-                RepoDirectory = new System.IO.DirectoryInfo(repopath as string);
+                github.RepoDirectory = new System.IO.DirectoryInfo(repopath as string);
             }
             else{
                 Console.WriteLine("Second Arg must be a directory");
@@ -160,6 +152,7 @@ namespace CSharp_Image_Action
 
             ImageResizer ir = new ImageResizer(thumbnail,256, 256, 1024, 1024, true, true);
 
+            //@@ Add Multithreading via thread pool here
             foreach(ImageDescriptor id in ImagesList)
             {
                 try{
@@ -167,10 +160,15 @@ namespace CSharp_Image_Action
                     id.FillBasicInfo();
 
                     if(ir.ThumbnailNeeded(id))
-                        ir.GenerateThumbnail(id);
+                    {
+                        ir.GenerateThumbnail(id,github);
+                    }
 
-                    if(ir.NeedsResize(id)) // when our algorithm gets better, or or image sizes change
-                        ir.ResizeImages(id);
+                    if(ir.NeedsResize(id))
+                    { // when our algorithm gets better, or or image sizes change
+                        ir.ResizeImages(id,github);
+                    }
+
                 }catch(Exception ex){
                     Console.WriteLine(ex.ToString());   
                 }
@@ -178,7 +176,7 @@ namespace CSharp_Image_Action
             Console.WriteLine("Images have been resized");
 
             Console.WriteLine("fixing up paths");
-            DD.FixUpPaths(RepoDirectory);
+            DD.FixUpPaths(github.RepoDirectory);
             
             DD.SaveMDFiles(domain, ImagesDirectory);
             Console.WriteLine("Image indexes written");
@@ -204,106 +202,44 @@ namespace CSharp_Image_Action
             }
             Console.WriteLine("Json written");
 
-            /*if(false)
             {
-                Console.WriteLine(" -- Merge new files -- ");
+                Console.WriteLine("Committing Json files");
 
-                try{
-                    using (var repo = new LibGit2Sharp.Repository(RepoDirectory.FullName) )
-                    {
-                        //LibGit2Sharp.Commit commit = repo.Head.Tip;
-                        LibGit2Sharp.Commands.Stage(repo, "*");
-                        repo.Index.Write();
-                        
-                        LibGit2Sharp.Signature committer = new LibGit2Sharp.Signature("GitHub Action", "actions@users.noreply.github.com", DateTime.Now);
+                github.AddorUpdateFile(fi);
 
-                        // Commit to the repository
-                        LibGit2Sharp.Commit commit = repo.Commit("Add resized images", committer, committer, new LibGit2Sharp.CommitOptions());
-                    }
-                }catch(Exception ex)
+                System.IO.FileInfo NewPath = new System.IO.FileInfo(args[1] + "\\_includes\\gallery.json");
+                if(NewPath.Exists)
                 {
-                    Console.WriteLine(ex);
+                    NewPath.Delete();
                 }
-            }*/
+                System.IO.File.Copy( fi.FullName, NewPath.FullName);
+                
+                github.AddorUpdateFile(NewPath);
 
-            Console.WriteLine(" --- ");
-
-            if(GitHubStuff)
+                Console.WriteLine("Json files Committed");
+                Console.WriteLine(" --- ");
+            }
+            
             {
-                if(!CleanlyLoggedIn)
+                Console.WriteLine("now to push to master");
+
+                Console.WriteLine(" --- ");
+            }
+
+            if(github.DoGitHubStuff)
+            {
+                if(!github.CleanlyLoggedIn)
                 {
                     Console.WriteLine("GitHub Login State unclear, Exiting");
                     return;
                 }
-                
+                   
                 string PRname = "From " + CurrentBranch + " to " + GHPages;
+
+                bool StalePRSuccess = await github.FindStalePullRequests(PRname);
+
+                bool CreatePRSuccess = await github.CreateAndLabelPullRequest(PRname);
                 
-                bool ShouldClose = false;
-
-                var prs = await github.PullRequest.GetAllForRepository(Owner,Repo);
-                
-                foreach(PullRequest pr in prs)
-                {
-                    foreach(Label l in pr.Labels)
-                    {
-                        ShouldClose = false;
-                        if(l.Name == AutoMergeLabel && pr.Title.Contains(PRname)) // I'm left over from a previous run
-                        {
-                            ShouldClose = true;
-                        }
-                        if(ShouldClose)
-                        {
-                            Console.WriteLine("It looks like you have an existing PR still open");
-                            Console.WriteLine("This is likely to fail, unless you close : " + pr.Title);
-                        }
-                        ShouldClose = false;
-                    }
-                }
-                
-                
-                Console.WriteLine("PR: " + PRname);
-                Console.WriteLine("Owner: " + Owner);
-                Console.WriteLine("CurrentBranch: " + CurrentBranch);
-                Console.WriteLine("TargetBranch: " + GHPages);
-
-                NewPullRequest newPr = new NewPullRequest(PRname + " : " + System.DateTime.UtcNow.ToString(),CurrentBranch,GHPages);
-                PullRequest pullRequest = await github.PullRequest.Create(Owner,Repo,newPr);
-                
-                Console.WriteLine("PR Created # : " + pullRequest.Number);
-
-                Console.WriteLine("PR Created: " + pullRequest.Title);
-
-                //var prupdate = new PullRequestUpdate();
-                //var newUpdate = await github.PullRequest.Update(Owner,Repo,pullRequest.Number,prupdate);
-
-                try{
-
-                    Console.WriteLine("Owner: " + PRname);        
-                    Console.WriteLine("Repo: " + Repo);
-                    Console.WriteLine("pullRequest.Number: " + pullRequest.Number);
-
-                    if(github == null){  
-                        Console.WriteLine("github == null");
-                    }
-                    if(github.Issue == null){
-                        Console.WriteLine("github.Issue == null");
-                    }
-
-                    var issue = await github.Issue.Get(Owner, Repo, pullRequest.Number);
-                    if(issue != null) //https://octokitnet.readthedocs.io/en/latest/issues/
-                    {
-                        var issueUpdate = issue.ToUpdate();
-                        if(issueUpdate != null)
-                        {
-                            issueUpdate.AddLabel(AutoMergeLabel);
-                            var labeladded = await github.Issue.Update(Owner, Repo, pullRequest.Number, issueUpdate);
-                            Console.WriteLine("Label Added: " + AutoMergeLabel);
-                        }
-                    }
-
-                }catch(Exception ex){
-                    Console.WriteLine(ex.ToString());   
-                }
 
                 Console.WriteLine("Bailing Out...");
             }

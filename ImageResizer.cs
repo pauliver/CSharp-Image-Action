@@ -70,23 +70,29 @@ namespace CSharp_Image_Action
                 return true;
         }
 
-        public void GenerateThumbnail(ImageDescriptor id)
+        public void GenerateThumbnail(ImageDescriptor id, PaulsOKWrapper github)
         {
             var fs = id.ThumbNailFile.OpenWrite();
             var success = ReSizeToBox(id,Thumbnail,fs);
             if(success)  
+            {
                 System.Console.WriteLine("Thumbnail Generated");
+                github.SomethingAboutCommittingAnImage(id.ThumbNailFile);
+            }
             else
                 System.Console.WriteLine("Thumbnail generation failed");
         }
 
-        public void ResizeImages(ImageDescriptor id)
+        public void ResizeImages(ImageDescriptor id, PaulsOKWrapper github)
         {
             var fs = id.ReSizedFileInfo.OpenWrite();
 
             var success = ReSizeToBox(id,StandardImage,fs);
             if(success)  
+            {
                 System.Console.WriteLine("Image Resized");
+                github.SomethingAboutCommittingAnImage(id.ReSizedFileInfo);
+            }
             else
                 System.Console.WriteLine("Image Resize Failed");
         }
