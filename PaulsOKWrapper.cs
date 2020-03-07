@@ -72,23 +72,79 @@ namespace CSharp_Image_Action
             this.AutoMergeLabel = p_autoMergeLabel;
 
             SetupForMergByLabel = true;
+
             return true;
         } 
 
-        public bool AddorUpdateFile(System.IO.FileInfo fi)
+        protected string headMasterRef;
+        protected Reference masterReference;
+        protected Commit latestCommit;
+        protected NewTree UpdatedTree;
+
+        async public ValueTask<bool> SetupCommit()
         {
+            //https://laedit.net/2016/11/12/GitHub-commit-with-Octokit-net.html
+            try
+            {
+                headMasterRef = "heads/master";
+                // Get reference of master branch
+                masterReference = await github.Git.Reference.Get(owner, repo, headMasterRef);
+                // Get the laster commit of this branch
+                latestCommit = await github.Git.Commit.Get(owner, repo, masterReference.Object.Sha);
+
+                UpdatedTree = new NewTree {BaseTree = latestCommit.Tree.Sha };
+
+            }catch(Exception ex)
+            {
+                cleanlyLoggedIn = false;
+
+                Console.WriteLine(ex.ToString());
+                
+                return false;
+            }
+            return true;
+        }
+
+        async public ValueTask<bool> AddorUpdateFile(System.IO.FileInfo fi)
+        {
+            // For image, get image content and convert it to base64
+            var imgBase64 = Convert.ToBase64String(File.ReadAllBytes(fi.FullName));
+            // Create image blob
+            var imgBlob = new NewBlob { Encoding = EncodingType.Base64, Content = (imgBase64) };
+            //var imgBlobRef = await github.Git.Blob.Update(owner, repo, imgblob);
+            var imgBlobRef = await github.Git.Blob.Create(owner, repo, imgBlob);
+
+            UpdatedTree.Tree.Add(new NewTreeItem { Path = fi.FullName.Replace(repoDirectory.FullName,""), Mode = "100644", Type = TreeType.Blob, Sha = imgBlobRef.Sha });
+
             // Is the file in the repo?
             // - if not add it
             // - if it is update it
             return true;
         }
 
-        public bool SomethingAboutCommittingAnImage(System.IO.FileInfo fi)
+        async public ValueTask<bool> SomethingAboutCommittingAnImage(System.IO.FileInfo fi)
         {
-            return AddorUpdateFile(fi);
+            return await AddorUpdateFile(fi);
         }
 
-        public async ValueTask<Boolean> FindStalePullRequests(string PRname)
+        async public ValueTask<bool> CommitAndPush()
+        {
+            try{
+                var newTree = await github.Git.Tree.Create(owner, repo, UpdatedTree);
+                var newCommit = new NewCommit("Commit test with several files", newTree.Sha, masterReference.Object.Sha);
+                var commit = await github.Git.Commit.Create(owner, repo, newCommit);
+                var headMasterRef = "heads/master";
+                // Update HEAD with the commit
+                await github.Git.Reference.Update(owner, repo, headMasterRef, new ReferenceUpdate(commit.Sha));
+            }catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return false;
+            }
+            return true;
+        }
+
+        public async ValueTask<bool> FindStalePullRequests(string PRname)
         {
             bool ShouldClose = false;
 

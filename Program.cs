@@ -82,6 +82,9 @@ namespace CSharp_Image_Action
                         AutoMergeLabel = args[8] as string;
                     }
                     github.SetupForMergesByLabel(AutoMergeLabel,CurrentBranch,GHPages);
+
+                    bool commitsetup = await github.SetupCommit();
+                    Console.WriteLine("Setup to commit changes: " + commitsetup.ToString());
                 }
             }
             if(repopath is string || repopath as string != null)
@@ -205,7 +208,7 @@ namespace CSharp_Image_Action
             {
                 Console.WriteLine("Committing Json files");
 
-                github.AddorUpdateFile(fi);
+                await github.AddorUpdateFile(fi);
 
                 System.IO.FileInfo NewPath = new System.IO.FileInfo(args[1] + "\\_includes\\gallery.json");
                 if(NewPath.Exists)
@@ -214,12 +217,12 @@ namespace CSharp_Image_Action
                 }
                 System.IO.File.Copy( fi.FullName, NewPath.FullName);
                 
-                github.AddorUpdateFile(NewPath);
+                await github.AddorUpdateFile(NewPath);
 
                 Console.WriteLine("Json files Committed");
                 Console.WriteLine(" --- ");
             }
-            
+                //https://laedit.net/2016/11/12/GitHub-commit-with-Octokit-net.html
             {
                 Console.WriteLine("now to push to master");
 

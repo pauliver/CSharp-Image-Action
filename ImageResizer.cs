@@ -77,7 +77,7 @@ namespace CSharp_Image_Action
             if(success)  
             {
                 System.Console.WriteLine("Thumbnail Generated");
-                github.SomethingAboutCommittingAnImage(id.ThumbNailFile);
+                await github.SomethingAboutCommittingAnImage(id.ThumbNailFile);
             }
             else
                 System.Console.WriteLine("Thumbnail generation failed");
@@ -91,7 +91,7 @@ namespace CSharp_Image_Action
             if(success)  
             {
                 System.Console.WriteLine("Image Resized");
-                github.SomethingAboutCommittingAnImage(id.ReSizedFileInfo);
+                await github.SomethingAboutCommittingAnImage(id.ReSizedFileInfo);
             }
             else
                 System.Console.WriteLine("Image Resize Failed");
