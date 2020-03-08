@@ -66,7 +66,7 @@ namespace CSharp_Image_Action
                 {// Setup the Owner and the Repo
                     Repo = args[4] as string;
                     Owner = args[5] as string;
-                    github.SetOwnerAndRepo(Owner,repopath);
+                    github.SetOwnerAndRepo(Owner,Repo);
                 }
                 {// Setup for merge between branches by label
                     if(args.Length >= 7 && args[6] is string)
