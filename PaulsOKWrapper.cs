@@ -120,32 +120,50 @@ namespace CSharp_Image_Action
         async public ValueTask<bool> AddorUpdateTextFile(System.IO.FileInfo fi)
         {
             TestCleanlyLoggedIn();
+            try
+            {
+                string filecontnet = File.ReadAllText(fi.FullName);
 
-            string filecontnet = File.ReadAllText(fi.FullName);
+                // This is one implementation of the abstract class SHA1.
+                var SHA = SHA1Util.SHA1HashStringForUTF8String(filecontnet);
 
-            // This is one implementation of the abstract class SHA1.
-            var SHA = SHA1Util.SHA1HashStringForUTF8String(filecontnet);
+                var temp = await github.Repository.Content.UpdateFile(owner,repo,fi.FullName.Replace(repoDirectory.FullName,""),new UpdateFileRequest("Updated " + fi.Name,filecontnet, SHA));
+            }catch(Exception ex)
+            {
+                cleanlyLoggedIn = false;
 
-            var temp = await github.Repository.Content.UpdateFile(owner,repo,fi.FullName.Replace(repoDirectory.FullName,""),new UpdateFileRequest("Updated " + fi.Name,filecontnet, SHA));
-
+                Console.WriteLine(ex.ToString());
+                
+                return false;
+            }
             return true;
         }
 
         async public ValueTask<bool> AddorUpdateFile(System.IO.FileInfo fi)
         {
             TestCleanlyLoggedIn();
-            // For image, get image content and convert it to base64
-            var imgBase64 = Convert.ToBase64String(File.ReadAllBytes(fi.FullName));
-            
-            // Create image blob
-            var imgBlob = new NewBlob { Encoding = EncodingType.Base64, Content = (imgBase64) };
-            var imgBlobRef = await github.Git.Blob.Create(owner, repo, imgBlob);
+            try
+            {
+                // For image, get image content and convert it to base64
+                var imgBase64 = Convert.ToBase64String(File.ReadAllBytes(fi.FullName));
+                
+                // Create image blob
+                var imgBlob = new NewBlob { Encoding = EncodingType.Base64, Content = (imgBase64) };
+                var imgBlobRef = await github.Git.Blob.Create(owner, repo, imgBlob);
 
-            UpdatedTree.Tree.Add(new NewTreeItem { Path = fi.FullName.Replace(repoDirectory.FullName,""), Mode = "100644", Type = TreeType.Blob, Sha = imgBlobRef.Sha });
+                UpdatedTree.Tree.Add(new NewTreeItem { Path = fi.FullName.Replace(repoDirectory.FullName,""), Mode = "100644", Type = TreeType.Blob, Sha = imgBlobRef.Sha });
 
-            // Is the file in the repo?
-            // - if not add it
-            // - if it is update it
+                // Is the file in the repo?
+                // - if not add it
+                // - if it is update it
+            }catch(Exception ex)
+            {
+                cleanlyLoggedIn = false;
+
+                Console.WriteLine(ex.ToString());
+                
+                return false;
+            }
             return true;
         }
 
@@ -203,7 +221,7 @@ namespace CSharp_Image_Action
         async public ValueTask<bool> CreateAndLabelPullRequest(string PRname)
         {
             TestCleanlyLoggedIn();
-            
+
             Console.WriteLine("PR: " + PRname);
             Console.WriteLine("Owner: " + owner);
             Console.WriteLine("CurrentBranch: " + CurrentBranchName);
