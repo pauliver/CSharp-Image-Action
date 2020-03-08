@@ -77,7 +77,7 @@ namespace CSharp_Image_Action
         }
         
         // Only 1 directory deep support currently. not a problem because Jekyll doesn't support it
-        public void SaveMDFiles(string Domain, System.IO.DirectoryInfo ImagesDirectory)
+        public void SaveMDFiles(string Domain, System.IO.DirectoryInfo ImagesDirectory, PaulsOKWrapper github)
         {
             if(directoryName == ImagesDirectory.Name)
             {
@@ -88,12 +88,17 @@ namespace CSharp_Image_Action
             
             foreach(DirectoryDescriptor dd in directories)
             {
-                dd.SaveMDFiles(Domain, ImagesDirectory);
+                dd.SaveMDFiles(Domain, ImagesDirectory, github);
             }
             //we need to overwrite them even if they exist (but we need some fortmat to allow edits)
             {
                 CreateIndexFile(indexfilename, Domain, ImagesDirectory);
                 System.Console.WriteLine("Create : " + indexfilename.FullName);
+            }
+            
+            if(github.DoGitHubStuff)
+            {
+                github.AddorUpdateTextFile(indexfilename);
             }
         }
 

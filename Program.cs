@@ -189,20 +189,23 @@ namespace CSharp_Image_Action
 
             Console.WriteLine("fixing up paths");
             DD.FixUpPaths(github.RepoDirectory);
-            
-            DD.SaveMDFiles(domain, ImagesDirectory);
-            Console.WriteLine("Image indexes written");
 
             if(github.DoGitHubStuff && NumCommitted >= 1) // Need more than 1 changed file to try and commit things
             {
                 Console.WriteLine(NumCommitted + " Images were generated, now to push to push them to master");
 
+                //https://laedit.net/2016/11/12/GitHub-commit-with-Octokit-net.html
                 await github.CommitAndPush();
 
                 Console.WriteLine(" --- ");
             }else{
                 Console.WriteLine("No images were altered, nothing to push to main");
             }
+            
+            DD.SaveMDFiles(domain, ImagesDirectory, github); //This follows another path...
+            Console.WriteLine("Image indexes written");
+
+
 
             var encoderSettings = new TextEncoderSettings();
             encoderSettings.AllowCharacters('\u0436', '\u0430');
@@ -242,8 +245,9 @@ namespace CSharp_Image_Action
                 Console.WriteLine("Json files Committed");
                 Console.WriteLine(" --- ");
             }
-                //https://laedit.net/2016/11/12/GitHub-commit-with-Octokit-net.html
 
+            
+            // do we need a synronication point here? lots of things could be goign onin parallel
 
             if(github.DoGitHubStuff)
             {
