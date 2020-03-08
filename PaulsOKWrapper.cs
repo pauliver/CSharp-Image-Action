@@ -140,7 +140,7 @@ namespace CSharp_Image_Action
             return content[0].Sha;
         }
 
-        async public ValueTask<bool> UpdateTextFile(System.IO.FileInfo fi)
+        async public ValueTask<bool> AddorUpdateTextFile(System.IO.FileInfo fi)
         {
             // We are using an API that has a limit of 1mb files
             // so this will not work for our images
