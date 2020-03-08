@@ -135,6 +135,7 @@ namespace CSharp_Image_Action
             {
                 return ZERORESULTS;
             }
+            // should we consider testing for (content[0].Size) so we can use "too big" ?
             return content[0].Sha;
         }
 
@@ -153,18 +154,14 @@ namespace CSharp_Image_Action
                 // This is one implementation of the abstract class SHA1.
                 //var SHA = SHA1Util.SHA1HashStringForUTF8String(filecontnet);
 
-                if(SHA == NEWFILE)
+                if(SHA == ZERORESULTS)
                 {
+                    Console.WriteLine("retrieved Zero results, was expecting one. Creating file instead");
                     var temp = await github.Repository.Content.CreateFile(owner,repo,filename,new CreateFileRequest("Created " + fi.Name,filecontnet));
                 }
                 else if(SHA == MULTIPLERESULTS)
                 {
                     Console.WriteLine("retrieved multiple results, was expecting one. can't continue");
-                    return false;
-                }
-                else if(SHA == ZERORESULTS)
-                {
-                    Console.WriteLine("retrieved Zero results, was expecting one. can't continue");
                     return false;
                 }
                 else if(SHA == TOOBIG)
