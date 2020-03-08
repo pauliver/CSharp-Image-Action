@@ -27,6 +27,15 @@ namespace CSharp_Image_Action
         protected string email;
         protected string username;
 
+        public void TestCleanlyLoggedIn()
+        {
+            if(!cleanlyLoggedIn)
+            {
+                Console.WriteLine("We have not cleanlyLogged In, but we are trying to do stuff!");
+                Console.WriteLine(System.Environment.StackTrace);
+            }
+        }
+
         public PaulsOKWrapper(bool gitHubStuff)
         {
             this.gitHubStuff = gitHubStuff;
@@ -85,6 +94,7 @@ namespace CSharp_Image_Action
 
         async public ValueTask<bool> SetupCommit()
         {
+            TestCleanlyLoggedIn();
             //https://laedit.net/2016/11/12/GitHub-commit-with-Octokit-net.html
             try
             {
@@ -109,6 +119,8 @@ namespace CSharp_Image_Action
 
         async public ValueTask<bool> AddorUpdateTextFile(System.IO.FileInfo fi)
         {
+            TestCleanlyLoggedIn();
+
             string filecontnet = File.ReadAllText(fi.FullName);
 
             // This is one implementation of the abstract class SHA1.
@@ -121,6 +133,7 @@ namespace CSharp_Image_Action
 
         async public ValueTask<bool> AddorUpdateFile(System.IO.FileInfo fi)
         {
+            TestCleanlyLoggedIn();
             // For image, get image content and convert it to base64
             var imgBase64 = Convert.ToBase64String(File.ReadAllBytes(fi.FullName));
             
@@ -143,6 +156,7 @@ namespace CSharp_Image_Action
 
         async public ValueTask<bool> CommitAndPush()
         {
+            TestCleanlyLoggedIn();
             try{
                 var newTree = await github.Git.Tree.Create(owner, repo, UpdatedTree);
                 var newCommit = new NewCommit("Updated Images and json files", newTree.Sha, masterReference.Object.Sha);
@@ -160,6 +174,8 @@ namespace CSharp_Image_Action
 
         public async ValueTask<bool> FindStalePullRequests(string PRname)
         {
+            TestCleanlyLoggedIn();
+
             bool ShouldClose = false;
 
             var prs = await github.PullRequest.GetAllForRepository(owner,repo);
@@ -186,6 +202,8 @@ namespace CSharp_Image_Action
 
         async public ValueTask<bool> CreateAndLabelPullRequest(string PRname)
         {
+            TestCleanlyLoggedIn();
+            
             Console.WriteLine("PR: " + PRname);
             Console.WriteLine("Owner: " + owner);
             Console.WriteLine("CurrentBranch: " + CurrentBranchName);
