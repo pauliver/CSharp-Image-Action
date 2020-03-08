@@ -123,6 +123,7 @@ namespace CSharp_Image_Action
         const string MULTIPLERESULTS = "MULTIPLE-RESULTS";
         const string ZERORESULTS = "ZERO-RESULTS";
 
+        // Flip this to a bitmask enum return? and a string with an SHA, so we can pack the bitmask with the flags we need, and return the SHA
         async public Task<string> GetTextFileSHA(string filename)
         {
             // https://developer.github.com/v3/repos/contents/#get-contents
