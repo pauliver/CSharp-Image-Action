@@ -79,7 +79,8 @@ namespace CSharp_Image_Action
                 System.Console.WriteLine("Thumbnail Generated");
 
                 //@@ is this going to give errors becuse its on a different thread now?
-                github.SomethingAboutCommittingAnImage(id.ThumbNailFile);
+                if(github.DoGitHubStuff)
+                    github.SomethingAboutCommittingAnImage(id.ThumbNailFile);
             }
             else
                 System.Console.WriteLine("Thumbnail generation failed");
@@ -95,7 +96,8 @@ namespace CSharp_Image_Action
                 System.Console.WriteLine("Image Resized");
 
                 //@@ is this going to give errors becuse its on a different thread now?
-                github.SomethingAboutCommittingAnImage(id.ReSizedFileInfo);
+                if(github.DoGitHubStuff)
+                    github.SomethingAboutCommittingAnImage(id.ReSizedFileInfo);
             }
             else
                 System.Console.WriteLine("Image Resize Failed");

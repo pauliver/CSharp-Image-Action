@@ -308,6 +308,7 @@ namespace CSharp_Image_Action
                 }
 
             }catch(Exception ex){
+                cleanlyLoggedIn = false;
                 Console.WriteLine(ex.ToString());  
                 return false; 
             }

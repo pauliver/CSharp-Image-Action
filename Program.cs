@@ -184,6 +184,14 @@ namespace CSharp_Image_Action
             DD.SaveMDFiles(domain, ImagesDirectory);
             Console.WriteLine("Image indexes written");
 
+            if(github.DoGitHubStuff)
+            {
+                Console.WriteLine("now to push to push images master");
+
+                await github.CommitAndPush();
+
+                Console.WriteLine(" --- ");
+            }
 
             var encoderSettings = new TextEncoderSettings();
             encoderSettings.AllowCharacters('\u0436', '\u0430');
@@ -205,6 +213,7 @@ namespace CSharp_Image_Action
             }
             Console.WriteLine("Json written");
 
+            if(github.DoGitHubStuff)
             {
                 Console.WriteLine("Committing Json files");
 
@@ -224,20 +233,12 @@ namespace CSharp_Image_Action
             }
                 //https://laedit.net/2016/11/12/GitHub-commit-with-Octokit-net.html
 
-            {
-                Console.WriteLine("now to push to master");
-
-                await github.CommitAndPush();
-
-                Console.WriteLine(" --- ");
-            }
 
             if(github.DoGitHubStuff)
             {
                 if(!github.CleanlyLoggedIn)
                 {
-                    Console.WriteLine("GitHub Login State unclear, Exiting");
-                    return;
+                    Console.WriteLine("GitHub Login State unclear, bad things may happen");
                 }
                    
                 string PRname = "From " + CurrentBranch + " to " + GHPages;
@@ -247,7 +248,7 @@ namespace CSharp_Image_Action
                 bool CreatePRSuccess = await github.CreateAndLabelPullRequest(PRname);
                 
 
-                Console.WriteLine("Bailing Out...");
+                Console.WriteLine("Run has finished Exiting...");
             }
         }
     }
