@@ -1,7 +1,9 @@
 using System;
+using System.Text;
 using System.IO;
 using Octokit;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 namespace CSharp_Image_Action
 {
@@ -105,10 +107,23 @@ namespace CSharp_Image_Action
             return true;
         }
 
+        async public ValueTask<bool> AddorUpdateTextFile(System.IO.FileInfo fi)
+        {
+            string filecontnet = File.ReadAllText(fi.FullName);
+
+            // This is one implementation of the abstract class SHA1.
+            var SHA = SHA1Util.SHA1HashStringForUTF8String(filecontnet);
+
+            var temp = await github.Repository.Content.UpdateFile(owner,repo,fi.FullName.Replace(repoDirectory.FullName,""),new UpdateFileRequest("Updated " + fi.Name,filecontnet, SHA));
+
+            return true;
+        }
+
         async public ValueTask<bool> AddorUpdateFile(System.IO.FileInfo fi)
         {
             // For image, get image content and convert it to base64
             var imgBase64 = Convert.ToBase64String(File.ReadAllBytes(fi.FullName));
+            
             // Create image blob
             var imgBlob = new NewBlob { Encoding = EncodingType.Base64, Content = (imgBase64) };
             var imgBlobRef = await github.Git.Blob.Create(owner, repo, imgBlob);
