@@ -122,6 +122,7 @@ namespace CSharp_Image_Action
 
         const string MULTIPLERESULTS = "MULTIPLE-RESULTS";
         const string ZERORESULTS = "ZERO-RESULTS";
+        private const string COMMITMESSAGE = "Time's up, let's do this";
 
         // Flip this to a bitmask enum return? and a string with an SHA, so we can pack the bitmask with the flags we need, and return the SHA
         async public Task<string> GetTextFileSHA(string filename)
@@ -316,6 +317,55 @@ namespace CSharp_Image_Action
             return true;
         }
 
+        async public ValueTask<bool> MergePullRequest(string CommitMessage = COMMITMESSAGE)
+        {
+            Console.WriteLine("Merging pull requests For: " + owner + " \\ " + repo );
+            Console.WriteLine(" - With Label : " + AutoMergeLabel );
+            Console.WriteLine(" - Message will be : " + CommitMessage);
+            if(CommitMessage == COMMITMESSAGE)
+            {
+                Console.WriteLine(" - LLLLEEEERROOOYYYY JENKINS");
+            }
+
+            bool shouldmerge = false;
+
+            var prs = await github.PullRequest.GetAllForRepository(owner,repo);
+                
+            foreach(PullRequest pr in prs)
+            {
+                foreach(Label l in pr.Labels)
+                {
+                    shouldmerge = false; // Reset state in a loop
+
+                    if(l.Name == AutoMergeLabel)
+                    {
+                        shouldmerge = true;
+                    }
+                    
+                    if(false)// Add your own conditions here, or perhaps a "NEVER MERGE" label?
+                    {
+                        shouldmerge = true;
+                    }
+
+                    if(shouldmerge)
+                    {
+                        MergePullRequest mpr = new MergePullRequest();
+                        mpr.CommitMessage = CommitMessage;
+                        mpr.MergeMethod = PullRequestMergeMethod.Merge;
+                        
+                        var merge = await github.PullRequest.Merge(owner,repo,pr.Number,mpr);
+                        if(merge.Merged)
+                        {
+                            Console.WriteLine("-> " + pr.Number + " - Successfully Merged");
+                        }else{
+                            Console.WriteLine("-> " + pr.Number + " - Merge Failed");
+                        }
+                    }
+                    shouldmerge = false; // Reset state in a loop
+                }
+            }
+            return true;
+        }
         
     }
 
