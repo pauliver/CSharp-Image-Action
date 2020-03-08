@@ -135,6 +135,7 @@ namespace CSharp_Image_Action
                 Console.WriteLine("arg 3 needs to be your domain");
             }
 
+            int NumCommitted = 0;
 
             DirectoryDescriptor DD = new DirectoryDescriptor(ImagesDirectory.Name, ImagesDirectory.FullName);
 
@@ -164,12 +165,20 @@ namespace CSharp_Image_Action
 
                     if(ir.ThumbnailNeeded(id))
                     {
-                        ir.GenerateThumbnail(id,github);
+                        var increase_count = ir.GenerateThumbnail(id,github);
+                        if(github.DoGitHubStuff && increase_count)
+                        {
+                            ++NumCommitted;
+                        }
                     }
 
                     if(ir.NeedsResize(id))
                     { // when our algorithm gets better, or or image sizes change
-                        ir.ResizeImages(id,github);
+                        var increase_count = ir.ResizeImages(id,github);
+                        if(github.DoGitHubStuff && increase_count)
+                        {
+                            ++NumCommitted;
+                        }
                     }
 
                 }catch(Exception ex){
@@ -184,7 +193,7 @@ namespace CSharp_Image_Action
             DD.SaveMDFiles(domain, ImagesDirectory);
             Console.WriteLine("Image indexes written");
 
-            if(github.DoGitHubStuff)
+            if(github.DoGitHubStuff && NumCommitted >= 1) // Need more than 1 changed file to try and commit things
             {
                 Console.WriteLine("now to push to push images master");
 

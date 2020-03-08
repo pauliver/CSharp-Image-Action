@@ -70,7 +70,7 @@ namespace CSharp_Image_Action
                 return true;
         }
 
-        public void GenerateThumbnail(ImageDescriptor id, PaulsOKWrapper github)
+        public bool GenerateThumbnail(ImageDescriptor id, PaulsOKWrapper github)
         {
             var fs = id.ThumbNailFile.OpenWrite();
             var success = ReSizeToBox(id,Thumbnail,fs);
@@ -80,13 +80,19 @@ namespace CSharp_Image_Action
 
                 //@@ is this going to give errors becuse its on a different thread now?
                 if(github.DoGitHubStuff)
+                {
                     github.SomethingAboutCommittingAnImage(id.ThumbNailFile);
+                }
             }
             else
+            {
                 System.Console.WriteLine("Thumbnail generation failed");
+                return false;
+            }
+            return true;
         }
 
-        public void ResizeImages(ImageDescriptor id, PaulsOKWrapper github)
+        public bool ResizeImages(ImageDescriptor id, PaulsOKWrapper github)
         {
             var fs = id.ReSizedFileInfo.OpenWrite();
 
@@ -97,10 +103,16 @@ namespace CSharp_Image_Action
 
                 //@@ is this going to give errors becuse its on a different thread now?
                 if(github.DoGitHubStuff)
+                {
                     github.SomethingAboutCommittingAnImage(id.ReSizedFileInfo);
+                }
             }
             else
+            {
                 System.Console.WriteLine("Image Resize Failed");
+                return false;
+            }
+            return true;
         }
         
         protected bool IsCorrectResolution(ImageDescriptor id, Box sizing )
