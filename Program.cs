@@ -195,11 +195,13 @@ namespace CSharp_Image_Action
 
             if(github.DoGitHubStuff && NumCommitted >= 1) // Need more than 1 changed file to try and commit things
             {
-                Console.WriteLine("now to push to push images master");
+                Console.WriteLine(NumCommitted + " Images were generated, now to push to push them to master");
 
                 await github.CommitAndPush();
 
                 Console.WriteLine(" --- ");
+            }else{
+                Console.WriteLine("No images were altered, nothing to push to main");
             }
 
             var encoderSettings = new TextEncoderSettings();
