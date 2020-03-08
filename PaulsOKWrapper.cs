@@ -117,17 +117,64 @@ namespace CSharp_Image_Action
             return true;
         }
 
-        async public ValueTask<bool> AddorUpdateTextFile(System.IO.FileInfo fi)
+        const string NEWFILE = "NEW-FILE";
+        const string TOOBIG = "TOO-BIG";
+
+        const string MULTIPLERESULTS = "MULTIPLE-RESULTS";
+        const string ZERORESULTS = "ZERO-RESULTS";
+
+        async public Task<string> GetTextFileSHA(string filename)
         {
+            // https://developer.github.com/v3/repos/contents/#get-contents
+            // if this is the first time we have seen the file return 
+            var content = await github.Repository.Content.GetAllContents(owner,repo,filename);
+            if(content.Count > 1)
+            {
+                return MULTIPLERESULTS;
+            }else if(content.Count == 0)
+            {
+                return ZERORESULTS;
+            }
+            return content[0].Sha;
+        }
+
+        async public ValueTask<bool> UpdateTextFile(System.IO.FileInfo fi)
+        {
+            // We are using an API that has a limit of 1mb files
+            // so this will not work for our images
             TestCleanlyLoggedIn();
+            string filename = fi.FullName.Replace(repoDirectory.FullName,"");
+            string SHA = await GetTextFileSHA(filename);
+            
             try
             {
                 string filecontnet = File.ReadAllText(fi.FullName);
 
                 // This is one implementation of the abstract class SHA1.
-                var SHA = SHA1Util.SHA1HashStringForUTF8String(filecontnet);
+                //var SHA = SHA1Util.SHA1HashStringForUTF8String(filecontnet);
 
-                var temp = await github.Repository.Content.UpdateFile(owner,repo,fi.FullName.Replace(repoDirectory.FullName,""),new UpdateFileRequest("Updated " + fi.Name,filecontnet, SHA));
+                if(SHA == NEWFILE)
+                {
+                    var temp = await github.Repository.Content.CreateFile(owner,repo,filename,new CreateFileRequest("Created " + fi.Name,filecontnet));
+                }
+                else if(SHA == MULTIPLERESULTS)
+                {
+                    Console.WriteLine("retrieved multiple results, was expecting one. can't continue");
+                    return false;
+                }
+                else if(SHA == ZERORESULTS)
+                {
+                    Console.WriteLine("retrieved Zero results, was expecting one. can't continue");
+                    return false;
+                }
+                else if(SHA == TOOBIG)
+                {
+                    Console.WriteLine("attempted to retrieve a file over 1mb from an API that limits to 1mb");
+                    return false;
+                }else{
+                    var temp = await github.Repository.Content.UpdateFile(owner,repo,filename,new UpdateFileRequest("Updated " + fi.Name,filecontnet, SHA));
+                }
+
             }catch(Exception ex)
             {
                 cleanlyLoggedIn = false;
