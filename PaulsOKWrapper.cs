@@ -184,57 +184,6 @@ namespace CSharp_Image_Action
             return true;
         }
 
-        async public ValueTask<bool> AddorUpdateFile(System.IO.FileInfo fi)
-        {
-            TestCleanlyLoggedIn();
-            try
-            {
-                // For image, get image content and convert it to base64
-                var imgBase64 = Convert.ToBase64String(File.ReadAllBytes(fi.FullName));
-                
-                // Create image blob
-                var imgBlob = new NewBlob { Encoding = EncodingType.Base64, Content = (imgBase64) };
-                var imgBlobRef = await github.Git.Blob.Create(owner, repo, imgBlob);
-
-                UpdatedTree.Tree.Add(new NewTreeItem { Path = fi.FullName.Replace(repoDirectory.FullName,""), Mode = "100644", Type = TreeType.Blob, Sha = imgBlobRef.Sha });
-
-                // Is the file in the repo?
-                // - if not add it
-                // - if it is update it
-            }catch(Exception ex)
-            {
-                cleanlyLoggedIn = false;
-
-                Console.WriteLine(ex.ToString());
-                
-                return false;
-            }
-            return true;
-        }
-
-        async public ValueTask<bool> SomethingAboutCommittingAnImage(System.IO.FileInfo fi)
-        {
-            return await AddorUpdateFile(fi);
-        }
-
-        async public ValueTask<bool> CommitAndPush()
-        {
-            TestCleanlyLoggedIn();
-            try{
-                var newTree = await github.Git.Tree.Create(owner, repo, UpdatedTree);
-                var newCommit = new NewCommit("Updated Images and json files", newTree.Sha, masterReference.Object.Sha);
-                var commit = await github.Git.Commit.Create(owner, repo, newCommit);
-                var headMasterRef = "heads/master";
-                // Update HEAD with the commit
-                await github.Git.Reference.Update(owner, repo, headMasterRef, new ReferenceUpdate(commit.Sha));
-            }catch(Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-                return false;
-            }
-            return true;
-        }
-
         public async ValueTask<bool> FindStalePullRequests(string PRname)
         {
             TestCleanlyLoggedIn();
@@ -314,6 +263,59 @@ namespace CSharp_Image_Action
             }
         return true;
         }
+
+
+        async public ValueTask<bool> AddorUpdateFile(System.IO.FileInfo fi)
+        {
+            TestCleanlyLoggedIn();
+            try
+            {
+                // For image, get image content and convert it to base64
+                var imgBase64 = Convert.ToBase64String(File.ReadAllBytes(fi.FullName));
+                
+                // Create image blob
+                var imgBlob = new NewBlob { Encoding = EncodingType.Base64, Content = (imgBase64) };
+                var imgBlobRef = await github.Git.Blob.Create(owner, repo, imgBlob);
+
+                UpdatedTree.Tree.Add(new NewTreeItem { Path = fi.FullName.Replace(repoDirectory.FullName,""), Mode = "100644", Type = TreeType.Blob, Sha = imgBlobRef.Sha });
+
+                // Is the file in the repo?
+                // - if not add it
+                // - if it is update it
+            }catch(Exception ex)
+            {
+                cleanlyLoggedIn = false;
+
+                Console.WriteLine(ex.ToString());
+                
+                return false;
+            }
+            return true;
+        }
+
+        async public ValueTask<bool> SomethingAboutCommittingAnImage(System.IO.FileInfo fi)
+        {
+            return await AddorUpdateFile(fi);
+        }
+
+        async public ValueTask<bool> CommitAndPush()
+        {
+            TestCleanlyLoggedIn();
+            try{
+                var newTree = await github.Git.Tree.Create(owner, repo, UpdatedTree);
+                var newCommit = new NewCommit("Updated Images and json files", newTree.Sha, masterReference.Object.Sha);
+                var commit = await github.Git.Commit.Create(owner, repo, newCommit);
+                var headMasterRef = "heads/master";
+                // Update HEAD with the commit
+                await github.Git.Reference.Update(owner, repo, headMasterRef, new ReferenceUpdate(commit.Sha));
+            }catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return false;
+            }
+            return true;
+        }
+
         
     }
 
