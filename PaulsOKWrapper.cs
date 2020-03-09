@@ -167,10 +167,11 @@ namespace CSharp_Image_Action
                 // This is one implementation of the abstract class SHA1.
                 var File_SHA = SHA1Util.SHA1HashStringForUTF8String(filecontnet);
 
-                Console.WriteLine(" | " + File_SHA + " | " + SHA + " | (difference is " + File_SHA.Replace(SHA,"*") + ")");
-
+                
+                Console.WriteLine("I'm not clear how Git Does their SHA. These will not be the same ever: " + " | " + File_SHA + " | " + SHA + " | ");
                 if(File_SHA == SHA)
                 {
+
                     Console.WriteLine("File SHA's are the same, no changes. Not creating or committing, exiting");
                     return true;
                 }
@@ -401,7 +402,10 @@ namespace CSharp_Image_Action
         
         public async ValueTask<bool> SyncPoint(bool await = true)
         {
-            // in this function, we should await all outstanding async tasks
+            // It looks like the GitHub stuff gets pretty out of wack with too much going on Async? SHA's end up wrong, etc... The tree ends up in bad state. 
+
+            // leaving this function here as a warning to future paul. DON"T GET CLEVER. You can't go Async with the commits to GitHub. 
+
             return true;
         }
         
