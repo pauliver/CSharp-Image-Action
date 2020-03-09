@@ -144,7 +144,7 @@ namespace CSharp_Image_Action
         async public ValueTask<bool> JustOneFileExists(string filename)
         {
 
-            var content = await github.Repository.Content.GetAllContents(owner,repo,filename);
+            var content = await github.Repository.Content.GetAllContents(owner, repo, filename);
             if(content.Count == 1)
             {
                 return true;
@@ -293,22 +293,19 @@ namespace CSharp_Image_Action
                 // Create image blob
                 var imgBlob = new NewBlob { Encoding = EncodingType.Base64, Content = (imgBase64) };
 
-                Console.WriteLine(fi.FullName);
-                Console.WriteLine(fi.Name);
-                Console.WriteLine(repoDirectory.FullName);
-                Console.WriteLine("-------------");
+                string FileName = fi.FullName.Replace(repoDirectory.FullName,"");
 
-                bool FileExists = await JustOneFileExists( fi.FullName.Replace(repoDirectory.FullName,""));
+                bool FileExists = await JustOneFileExists( FileName );
 
                 if(FileExists)
                 {
                     var imgBlobRef = await github.Git.Blob.Create(owner, repo, imgBlob);
 
-                    UpdatedTree.Tree.Add(new NewTreeItem { Path = fi.FullName.Replace(repoDirectory.FullName,""), Mode = "100644", Type = TreeType.Blob, Sha = imgBlobRef.Sha });
+                    UpdatedTree.Tree.Add(new NewTreeItem { Path = FileName, Mode = "100644", Type = TreeType.Blob, Sha = imgBlobRef.Sha });
                 }else{
                     var imgBlobRef = await github.Git.Blob.Create(owner, repo, imgBlob);
 
-                    UpdatedTree.Tree.Add(new NewTreeItem { Path = fi.FullName.Replace(repoDirectory.FullName,""), Mode = "100644", Type = TreeType.Blob, Sha = imgBlobRef.Sha });
+                    UpdatedTree.Tree.Add(new NewTreeItem { Path = FileName, Mode = "100644", Type = TreeType.Blob, Sha = imgBlobRef.Sha });
                 }
 
                 // Is the file in the repo?
