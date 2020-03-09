@@ -156,6 +156,8 @@ namespace CSharp_Image_Action
                 // This is one implementation of the abstract class SHA1.
                 var File_SHA = SHA1Util.SHA1HashStringForUTF8String(filecontnet);
 
+                Console.WriteLine(" | " + File_SHA + " | " + SHA + " | (difference is " + File_SHA.Replace(SHA,"*") + ")");
+
                 if(File_SHA == SHA)
                 {
                     Console.WriteLine("File SHA's are the same, no changes. Not creating or committing, exiting");
