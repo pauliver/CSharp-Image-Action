@@ -333,9 +333,11 @@ namespace CSharp_Image_Action
                 
             foreach(PullRequest pr in prs)
             {
+                shouldmerge = false; // Reset state in a loop
+                Console.WriteLine("Found PR: " + pr.Title);
+
                 foreach(Label l in pr.Labels)
                 {
-                    shouldmerge = false; // Reset state in a loop
 
                     if(l.Name == AutoMergeLabel)
                     {
@@ -347,22 +349,22 @@ namespace CSharp_Image_Action
                         shouldmerge = true;
                     }
 
-                    if(shouldmerge)
-                    {
-                        MergePullRequest mpr = new MergePullRequest();
-                        mpr.CommitMessage = CommitMessage;
-                        mpr.MergeMethod = PullRequestMergeMethod.Merge;
-                        
-                        var merge = await github.PullRequest.Merge(owner,repo,pr.Number,mpr);
-                        if(merge.Merged)
-                        {
-                            Console.WriteLine("-> " + pr.Number + " - Successfully Merged");
-                        }else{
-                            Console.WriteLine("-> " + pr.Number + " - Merge Failed");
-                        }
-                    }
-                    shouldmerge = false; // Reset state in a loop
                 }
+                if(shouldmerge)
+                {
+                    MergePullRequest mpr = new MergePullRequest();
+                    mpr.CommitMessage = CommitMessage;
+                    mpr.MergeMethod = PullRequestMergeMethod.Merge;
+                    
+                    var merge = await github.PullRequest.Merge(owner,repo,pr.Number,mpr);
+                    if(merge.Merged)
+                    {
+                        Console.WriteLine("-> " + pr.Number + " - Successfully Merged");
+                    }else{
+                        Console.WriteLine("-> " + pr.Number + " - Merge Failed");
+                    }
+                }
+                shouldmerge = false; // Reset state in a loop
             }
             return true;
         }
