@@ -98,7 +98,10 @@ namespace CSharp_Image_Action
             
             if(github.DoGitHubStuff)
             {
-                github.ImmediatlyAddorUpdateTextFile(indexfilename);
+                System.Threading.Tasks.ValueTask<bool> task =  github.ImmediatlyAddorUpdateTextFile(indexfilename);
+
+                //this awaits the result of the above async call
+                var result = task.GetAwaiter().GetResult();
             }
         }
 
