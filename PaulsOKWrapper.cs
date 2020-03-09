@@ -187,14 +187,7 @@ namespace CSharp_Image_Action
                     return false;
                 }else{
                     var fur = new UpdateFileRequest("Updated " + fi.Name, filecontnet, SHA);
-
-                    if(fur.Sha == SHA)
-                    {
-                        Console.WriteLine("Identical SHA, duplicate packages");
-                        return true;
-                    }else{
-                        var temp = await github.Repository.Content.UpdateFile(owner,repo,filename, fur);
-                    }
+                    var temp = await github.Repository.Content.UpdateFile(owner,repo,filename, fur);
                 }
 
             }catch(Exception ex)
