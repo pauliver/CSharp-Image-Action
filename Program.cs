@@ -231,7 +231,7 @@ namespace CSharp_Image_Action
             {
                 Console.WriteLine("Committing Json files");
 
-                await github.AddorUpdateTextFile(fi);
+                await github.ImmediatlyAddorUpdateTextFile(fi);
 
                 System.IO.FileInfo NewPath = new System.IO.FileInfo(args[1] + "\\_includes\\gallery.json");
                 if(NewPath.Exists)
@@ -240,7 +240,7 @@ namespace CSharp_Image_Action
                 }
                 System.IO.File.Copy( fi.FullName, NewPath.FullName);
                 
-                await github.AddorUpdateTextFile(NewPath);
+                await github.ImmediatlyAddorUpdateTextFile(NewPath);
 
                 Console.WriteLine("Json files Committed");
                 Console.WriteLine(" --- ");

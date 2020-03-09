@@ -98,7 +98,7 @@ namespace CSharp_Image_Action
             
             if(github.DoGitHubStuff)
             {
-                github.AddorUpdateTextFile(indexfilename);
+                github.ImmediatlyAddorUpdateTextFile(indexfilename);
             }
         }
 

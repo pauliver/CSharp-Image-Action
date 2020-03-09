@@ -141,7 +141,7 @@ namespace CSharp_Image_Action
             return content[0].Sha;
         }
 
-        async public ValueTask<bool> AddorUpdateTextFile(System.IO.FileInfo fi)
+        async public ValueTask<bool> ImmediatlyAddorUpdateTextFile(System.IO.FileInfo fi)
         {
             // We are using an API that has a limit of 1mb files
             // so this will not work for our images
@@ -154,7 +154,13 @@ namespace CSharp_Image_Action
                 string filecontnet = File.ReadAllText(fi.FullName);
 
                 // This is one implementation of the abstract class SHA1.
-                //var SHA = SHA1Util.SHA1HashStringForUTF8String(filecontnet);
+                var File_SHA = SHA1Util.SHA1HashStringForUTF8String(filecontnet);
+
+                if(File_SHA == SHA)
+                {
+                    Console.WriteLine("File SHA's are the same, no changes. Not creating or committing, exiting");
+                    return true;
+                }
 
                 if(SHA == ZERORESULTS)
                 {
