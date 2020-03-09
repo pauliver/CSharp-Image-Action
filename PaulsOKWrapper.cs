@@ -143,7 +143,7 @@ namespace CSharp_Image_Action
 
         async public ValueTask<bool> JustOneFileExists(string filename)
         {
-
+            Console.WriteLine("Checking if file exists: " + filename);
             var content = await github.Repository.Content.GetAllContents(owner, repo, filename);
             if(content.Count == 1)
             {
@@ -294,7 +294,7 @@ namespace CSharp_Image_Action
                 var imgBlob = new NewBlob { Encoding = EncodingType.Base64, Content = (imgBase64) };
 
                 string FileName = fi.FullName.Replace(repoDirectory.FullName,"");
-
+                
                 bool FileExists = await JustOneFileExists( FileName );
 
                 if(FileExists)
