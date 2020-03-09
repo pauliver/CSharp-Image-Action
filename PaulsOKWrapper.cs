@@ -165,21 +165,16 @@ namespace CSharp_Image_Action
                 string filecontnet = File.ReadAllText(fi.FullName);
 
                 // This is one implementation of the abstract class SHA1.
-                var File_SHA = SHA1Util.SHA1HashStringForUTF8String(filecontnet);
+                //var File_SHA = SHA1Util.SHA1HashStringForUTF8String(filecontnet);
 
                 
-                Console.WriteLine("I'm not clear how Git Does their SHA. These will not be the same ever: " + " | " + File_SHA + " | " + SHA + " | ");
-                if(File_SHA == SHA)
-                {
-
-                    Console.WriteLine("File SHA's are the same, no changes. Not creating or committing, exiting");
-                    return true;
-                }
+    
 
                 if(SHA == ZERORESULTS)
                 {
                     Console.WriteLine("retrieved Zero results, was expecting one. Creating file instead");
                     var temp = await github.Repository.Content.CreateFile(owner,repo,filename,new CreateFileRequest("Created " + fi.Name,filecontnet));
+
                 }
                 else if(SHA == MULTIPLERESULTS)
                 {
@@ -191,7 +186,15 @@ namespace CSharp_Image_Action
                     Console.WriteLine("attempted to retrieve a file over 1mb from an API that limits to 1mb");
                     return false;
                 }else{
-                    var temp = await github.Repository.Content.UpdateFile(owner,repo,filename,new UpdateFileRequest("Updated " + fi.Name,filecontnet, SHA));
+                    var fur = new UpdateFileRequest("Updated " + fi.Name, filecontnet, SHA);
+
+                    if(fur.Sha == SHA)
+                    {
+                        Console.WriteLine("Identical SHA, duplicate packages");
+                        return true;
+                    }else{
+                        var temp = await github.Repository.Content.UpdateFile(owner,repo,filename, fur);
+                    }
                 }
 
             }catch(Exception ex)

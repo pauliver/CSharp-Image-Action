@@ -170,7 +170,7 @@ namespace CSharp_Image_Action
             }
             tw.WriteLine("{% include footer.md %}");
             tw.WriteLine();
-            tw.WriteLine("<!-- created on " + System.DateTime.Now.ToString("MM/dd/yyyy h:mm tt") + " -->");
+            //tw.WriteLine("<!-- created on " + System.DateTime.Now.ToString("MM/dd/yyyy h:mm tt") + " -->");
             tw.Flush();
             tw.Close();
         }
