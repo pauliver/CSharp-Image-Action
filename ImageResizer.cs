@@ -74,6 +74,8 @@ namespace CSharp_Image_Action
         {
             var fs = id.ThumbNailFile.OpenWrite();
             var success = ReSizeToBox(id,Thumbnail,fs);
+            fs.Close();
+            
             if(success)  
             {
                 System.Console.WriteLine("Thumbnail Generated");
