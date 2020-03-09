@@ -246,8 +246,8 @@ namespace CSharp_Image_Action
                 Console.WriteLine(" --- ");
             }
 
-            
-            // do we need a synronication point here? lots of things could be goign onin parallel
+            // do we need a synronication point here? lots of things could be going on in parallel
+            await github.SyncPoint(true);
 
             if(github.DoGitHubStuff)
             {

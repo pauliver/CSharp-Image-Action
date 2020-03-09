@@ -125,7 +125,7 @@ namespace CSharp_Image_Action
         private const string COMMITMESSAGE = "Time's up, let's do this";
 
         // Flip this to a bitmask enum return? and a string with an SHA, so we can pack the bitmask with the flags we need, and return the SHA
-        async public Task<string> GetTextFileSHA(string filename)
+        async public Task<string> GetFileSHA(string filename)
         {
             // https://developer.github.com/v3/repos/contents/#get-contents
             // if this is the first time we have seen the file return 
@@ -141,13 +141,24 @@ namespace CSharp_Image_Action
             return content[0].Sha;
         }
 
+        async public ValueTask<bool> JustOneFileExists(string filename)
+        {
+
+            var content = await github.Repository.Content.GetAllContents(owner,repo,filename);
+            if(content.Count == 1)
+            {
+                return true;
+            }
+            return false;
+        }
+
         async public ValueTask<bool> ImmediatlyAddorUpdateTextFile(System.IO.FileInfo fi)
         {
             // We are using an API that has a limit of 1mb files
             // so this will not work for our images
             TestCleanlyLoggedIn();
             string filename = fi.FullName.Replace(repoDirectory.FullName,"");
-            string SHA = await GetTextFileSHA(filename);
+            string SHA = await GetFileSHA(filename);
             
             try
             {
@@ -284,9 +295,19 @@ namespace CSharp_Image_Action
                 
                 // Create image blob
                 var imgBlob = new NewBlob { Encoding = EncodingType.Base64, Content = (imgBase64) };
-                var imgBlobRef = await github.Git.Blob.Create(owner, repo, imgBlob);
 
-                UpdatedTree.Tree.Add(new NewTreeItem { Path = fi.FullName.Replace(repoDirectory.FullName,""), Mode = "100644", Type = TreeType.Blob, Sha = imgBlobRef.Sha });
+                bool FileExists = await JustOneFileExists( fi.FullName.Replace(repoDirectory.FullName,""));
+
+                if(FileExists)
+                {
+                    var imgBlobRef = await github.Git.Blob.Create(owner, repo, imgBlob);
+
+                    UpdatedTree.Tree.Add(new NewTreeItem { Path = fi.FullName.Replace(repoDirectory.FullName,""), Mode = "100644", Type = TreeType.Blob, Sha = imgBlobRef.Sha });
+                }else{
+                    var imgBlobRef = await github.Git.Blob.Create(owner, repo, imgBlob);
+
+                    UpdatedTree.Tree.Add(new NewTreeItem { Path = fi.FullName.Replace(repoDirectory.FullName,""), Mode = "100644", Type = TreeType.Blob, Sha = imgBlobRef.Sha });
+                }
 
                 // Is the file in the repo?
                 // - if not add it
@@ -374,6 +395,13 @@ namespace CSharp_Image_Action
                 }
                 shouldmerge = false; // Reset state in a loop
             }
+            return true;
+        }
+
+        
+        public async ValueTask<bool> SyncPoint(bool await = true)
+        {
+            // in this function, we should await all outstanding async tasks
             return true;
         }
         
