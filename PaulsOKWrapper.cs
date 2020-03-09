@@ -4,6 +4,7 @@ using System.IO;
 using Octokit;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
+using System.Collections.Generic;
 
 namespace CSharp_Image_Action
 {
@@ -128,8 +129,19 @@ namespace CSharp_Image_Action
         async public Task<string> GetFileSHA(string filename)
         {
             // https://developer.github.com/v3/repos/contents/#get-contents
-            // if this is the first time we have seen the file return 
-            var content = await github.Repository.Content.GetAllContents(owner,repo,filename);
+            // if this is the first time we have seen the file return
+            IReadOnlyList<Octokit.RepositoryContent> content = null; 
+            try{
+                content = await github.Repository.Content.GetAllContents(owner,repo,filename);
+            }catch(Exception ex)
+            {
+                if(ex is Octokit.NotFoundException)
+                {
+                    return ZERORESULTS;
+                }
+                Console.WriteLine(ex.ToString());
+            }
+
             if(content.Count > 1)
             {
                 return MULTIPLERESULTS;
@@ -144,7 +156,19 @@ namespace CSharp_Image_Action
         async public ValueTask<bool> JustOneFileExists(string filename)
         {
             Console.WriteLine("Checking if file exists: " + filename);
-            var content = await github.Repository.Content.GetAllContents(owner, repo, filename);
+            IReadOnlyList<Octokit.RepositoryContent> content = null;
+
+            try{
+                content = await github.Repository.Content.GetAllContents(owner, repo, filename);
+            }catch(Exception ex)
+            {
+                if(ex is Octokit.NotFoundException)
+                {
+                    return false;
+                }
+                Console.WriteLine(ex.ToString());
+            }
+
             if(content.Count == 1)
             {
                 return true;
