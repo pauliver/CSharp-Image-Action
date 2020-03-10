@@ -267,7 +267,7 @@ namespace CSharp_Image_Action
 
                 Console.WriteLine("Run has finished Exiting...");
             }
-            return success;
+            return successfull;
         }
     }
 }
