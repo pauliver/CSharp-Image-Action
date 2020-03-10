@@ -64,6 +64,18 @@ namespace CSharp_Image_Action
                 };
                 cleanlyLoggedIn = true; // or maybe
                 Console.WriteLine("... Loaded");
+
+                try{
+                    Task<MiscellaneousRateLimit> limits = github.Miscellaneous.GetRateLimits();
+                    var awaitlimits = limits.GetAwaiter().GetResult();
+                    Console.WriteLine("Rate Limit Total: " + awaitlimits.Rate.Limit);
+                    Console.WriteLine("Rate Limit Remaing: " + awaitlimits.Rate.Remaining);
+                    Console.WriteLine("Rate Limit Resets: " + awaitlimits.Rate.Reset.ToString("MM/dd/yyyy h:mm tt"));
+                }catch(Exception rc)
+                {
+                    Console.Write(rc.ToString());
+                }
+
                 return true;
             }catch(Exception ex){
                 Console.WriteLine(ex.ToString());
