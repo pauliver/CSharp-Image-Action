@@ -196,6 +196,26 @@ namespace CSharp_Image_Action
             {
                 Console.WriteLine(NumCommitted + " Images were generated, now to push to push them to master");
 
+                int RateLimitCallsLeft = github.DecrementAPICallsBy(0);
+                if( (NumCommitted * 2) > RateLimitCallsLeft )
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("WARNING!!!!");
+                    Console.WriteLine();
+                    Console.WriteLine("WARNING!!!!");
+                    Console.WriteLine();
+                    Console.WriteLine("WARNING!!!!");
+                    Console.WriteLine();
+                    Console.WriteLine("GitHub API Will rate limit to 1000 calls an hour. you are adding " + NumCommitted + " files and you have " + RateLimitCallsLeft + " API calls left");
+                    Console.WriteLine();
+                    Console.WriteLine("WARNING!!!!");
+                    Console.WriteLine();
+                    Console.WriteLine("WARNING!!!!");
+                    Console.WriteLine();
+                    Console.WriteLine("WARNING!!!!");
+                    Console.WriteLine();
+                }
+
                 //https://laedit.net/2016/11/12/GitHub-commit-with-Octokit-net.html
                 if(!await github.CommitAndPush())
                 {
@@ -275,6 +295,7 @@ namespace CSharp_Image_Action
                     successfull = 4;
                 } 
 
+                github.RefreshRateLimits();
                 Console.WriteLine("Run has finished Exiting...");
             }
             return successfull;

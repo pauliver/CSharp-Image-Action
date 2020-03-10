@@ -12,6 +12,8 @@ namespace CSharp_Image_Action
     // we are wrappign OctoKit
     public class PaulsOKWrapper
     {
+        protected int APICallsRemaining = 0;
+
         protected string repo = "Repo";
         protected string owner = "Owner";
 
@@ -67,10 +69,12 @@ namespace CSharp_Image_Action
 
                 try{
                     Task<MiscellaneousRateLimit> limits = github.Miscellaneous.GetRateLimits();
-                    var awaitlimits = limits.GetAwaiter().GetResult();
+                    var awaitlimits = limits.GetAwaiter().GetResult(); 
+                    APICallsRemaining = awaitlimits.Rate.Remaining;
                     Console.WriteLine("Rate Limit Total: " + awaitlimits.Rate.Limit);
-                    Console.WriteLine("Rate Limit Remaing: " + awaitlimits.Rate.Remaining);
+                    Console.WriteLine("Rate Limit Remaing: " + APICallsRemaining);
                     Console.WriteLine("Rate Limit Resets: " + awaitlimits.Rate.Reset.ToString("MM/dd/yyyy h:mm tt"));
+                    
                 }catch(Exception rc)
                 {
                     Console.Write(rc.ToString());
@@ -82,6 +86,32 @@ namespace CSharp_Image_Action
                 Console.WriteLine("... Loading Failed");
                 cleanlyLoggedIn = false;
                 return false;
+            }
+        }
+
+        public int DecrementAPICallsBy(int num = 1)
+        {
+            APICallsRemaining -= num;
+            if(APICallsRemaining <= 0)
+            {
+                Console.WriteLine("THIS IS YOUR LAST API CALL< OR THERE ARE NON LEFT");
+            }
+            return APICallsRemaining;
+        }
+
+        public void RefreshRateLimits()
+        {
+            try{
+                Task<MiscellaneousRateLimit> limits = github.Miscellaneous.GetRateLimits();
+                var awaitlimits = limits.GetAwaiter().GetResult(); 
+                APICallsRemaining = awaitlimits.Rate.Remaining;
+                Console.WriteLine("Rate Limit Total: " + awaitlimits.Rate.Limit);
+                Console.WriteLine("Rate Limit Remaing: " + APICallsRemaining);
+                Console.WriteLine("Rate Limit Resets: " + awaitlimits.Rate.Reset.ToString("MM/dd/yyyy h:mm tt"));
+            }
+            catch(Exception rc)
+            {
+                Console.Write(rc.ToString());
             }
         }
 
@@ -113,9 +143,9 @@ namespace CSharp_Image_Action
             {
                 headMasterRef = "heads/master";
                 // Get reference of master branch
-                masterReference = await github.Git.Reference.Get(owner, repo, headMasterRef);
+                masterReference = await github.Git.Reference.Get(owner, repo, headMasterRef); DecrementAPICallsBy();
                 // Get the laster commit of this branch
-                latestCommit = await github.Git.Commit.Get(owner, repo, masterReference.Object.Sha);
+                latestCommit = await github.Git.Commit.Get(owner, repo, masterReference.Object.Sha); DecrementAPICallsBy();
 
                 UpdatedTree = new NewTree {BaseTree = latestCommit.Tree.Sha };
 
@@ -144,7 +174,7 @@ namespace CSharp_Image_Action
             // if this is the first time we have seen the file return
             IReadOnlyList<Octokit.RepositoryContent> content = null; 
             try{
-                content = await github.Repository.Content.GetAllContents(owner,repo,filename);
+                content = await github.Repository.Content.GetAllContents(owner,repo,filename); DecrementAPICallsBy();
             }catch(Exception ex)
             {
                 if(ex is Octokit.NotFoundException)
@@ -171,7 +201,7 @@ namespace CSharp_Image_Action
             IReadOnlyList<Octokit.RepositoryContent> content = null;
 
             try{
-                content = await github.Repository.Content.GetAllContents(owner, repo, filename);
+                content = await github.Repository.Content.GetAllContents(owner, repo, filename); DecrementAPICallsBy();
             }catch(Exception ex)
             {
                 if(ex is Octokit.NotFoundException)
@@ -194,7 +224,7 @@ namespace CSharp_Image_Action
             // so this will not work for our images
             TestCleanlyLoggedIn();
             string filename = fi.FullName.Replace(repoDirectory.FullName,"");
-            string SHA = await GetFileSHA(filename);
+            string SHA = await GetFileSHA(filename); 
             
             try
             {
@@ -209,7 +239,7 @@ namespace CSharp_Image_Action
                 if(SHA == ZERORESULTS)
                 {
                     Console.WriteLine("retrieved Zero results, was expecting one. Creating file instead");
-                    var temp = await github.Repository.Content.CreateFile(owner,repo,filename,new CreateFileRequest("Created " + fi.Name,filecontnet));
+                    var temp = await github.Repository.Content.CreateFile(owner,repo,filename,new CreateFileRequest("Created " + fi.Name,filecontnet)); DecrementAPICallsBy();
 
                 }
                 else if(SHA == MULTIPLERESULTS)
@@ -223,7 +253,7 @@ namespace CSharp_Image_Action
                     return false;
                 }else{
                     var fur = new UpdateFileRequest("Updated " + fi.Name, filecontnet, SHA);
-                    var temp = await github.Repository.Content.UpdateFile(owner,repo,filename, fur);
+                    var temp = await github.Repository.Content.UpdateFile(owner,repo,filename, fur); DecrementAPICallsBy();
                 }
 
             }catch(Exception ex)
@@ -275,7 +305,7 @@ namespace CSharp_Image_Action
             Console.WriteLine("TargetBranch: " + TargetBranchName);
 
             NewPullRequest newPr = new NewPullRequest(PRname + " : " + System.DateTime.UtcNow.ToString(),CurrentBranchName,TargetBranchName);
-            PullRequest pullRequest = await github.PullRequest.Create(owner,repo,newPr);
+            PullRequest pullRequest = await github.PullRequest.Create(owner,repo,newPr); DecrementAPICallsBy();
             
             Console.WriteLine("PR Created # : " + pullRequest.Number);
 
@@ -297,14 +327,14 @@ namespace CSharp_Image_Action
                     Console.WriteLine("github.Issue == null");
                 }
 
-                var issue = await github.Issue.Get(owner, repo, pullRequest.Number);
+                var issue = await github.Issue.Get(owner, repo, pullRequest.Number); DecrementAPICallsBy();
                 if(issue != null) //https://octokitnet.readthedocs.io/en/latest/issues/
                 {
                     var issueUpdate = issue.ToUpdate();
                     if(issueUpdate != null)
                     {
                         issueUpdate.AddLabel(AutoMergeLabel);
-                        var labeladded = await github.Issue.Update(owner, repo, pullRequest.Number, issueUpdate);
+                        var labeladded = await github.Issue.Update(owner, repo, pullRequest.Number, issueUpdate); DecrementAPICallsBy();
                         Console.WriteLine("Label Added: " + AutoMergeLabel);
                     }
                 }
@@ -342,7 +372,7 @@ namespace CSharp_Image_Action
                 //}else
 
                 {
-                    var imgBlobRef = await github.Git.Blob.Create(owner, repo, imgBlob);
+                    var imgBlobRef = await github.Git.Blob.Create(owner, repo, imgBlob); DecrementAPICallsBy();
 
                     UpdatedTree.Tree.Add(new NewTreeItem { Path = FileName, Mode = "100644", Type = TreeType.Blob, Sha = imgBlobRef.Sha });
                 }
@@ -370,12 +400,12 @@ namespace CSharp_Image_Action
         {
             TestCleanlyLoggedIn();
             try{
-                var newTree = await github.Git.Tree.Create(owner, repo, UpdatedTree);
+                var newTree = await github.Git.Tree.Create(owner, repo, UpdatedTree); DecrementAPICallsBy();
                 var newCommit = new NewCommit("Updated Images and json files", newTree.Sha, masterReference.Object.Sha);
-                var commit = await github.Git.Commit.Create(owner, repo, newCommit);
+                var commit = await github.Git.Commit.Create(owner, repo, newCommit); DecrementAPICallsBy();
                 var headMasterRef = "heads/master";
                 // Update HEAD with the commit
-                await github.Git.Reference.Update(owner, repo, headMasterRef, new ReferenceUpdate(commit.Sha));
+                await github.Git.Reference.Update(owner, repo, headMasterRef, new ReferenceUpdate(commit.Sha)); DecrementAPICallsBy();
             }catch(Exception ex)
             {
                 Console.WriteLine(ex.ToString());
@@ -396,7 +426,7 @@ namespace CSharp_Image_Action
 
             bool shouldmerge = false;
 
-            var prs = await github.PullRequest.GetAllForRepository(owner,repo);
+            var prs = await github.PullRequest.GetAllForRepository(owner,repo); DecrementAPICallsBy();
                 
             foreach(PullRequest pr in prs)
             {
@@ -423,7 +453,7 @@ namespace CSharp_Image_Action
                     mpr.CommitMessage = CommitMessage;
                     mpr.MergeMethod = PullRequestMergeMethod.Merge;
                     
-                    var merge = await github.PullRequest.Merge(owner,repo,pr.Number,mpr);
+                    var merge = await github.PullRequest.Merge(owner,repo,pr.Number,mpr); DecrementAPICallsBy();
                     if(merge.Merged)
                     {
                         Console.WriteLine("-> " + pr.Number + " - Successfully Merged");
