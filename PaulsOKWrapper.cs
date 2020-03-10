@@ -318,7 +318,7 @@ namespace CSharp_Image_Action
         }
 
 
-        async public ValueTask<bool> AddorUpdateFile(System.IO.FileInfo fi)
+        async public ValueTask<bool> AddorUpdateBinaryFile(System.IO.FileInfo fi)
         {
             TestCleanlyLoggedIn();
             try
@@ -331,14 +331,17 @@ namespace CSharp_Image_Action
 
                 string FileName = fi.FullName.Replace(repoDirectory.FullName,"").Replace("\\","/");
                 
-                bool FileExists = await JustOneFileExists( FileName );
+                // Both these paths are the same, and we need fewer API calls. This will be 300 fewer API calls now
 
-                if(FileExists)
+                //bool FileExists = await JustOneFileExists( FileName );
+                //if(FileExists)
+                //{
+                //    var imgBlobRef = await github.Git.Blob.Create(owner, repo, imgBlob);
+                //
+                //    UpdatedTree.Tree.Add(new NewTreeItem { Path = FileName, Mode = "100644", Type = TreeType.Blob, Sha = imgBlobRef.Sha });
+                //}else
+
                 {
-                    var imgBlobRef = await github.Git.Blob.Create(owner, repo, imgBlob);
-
-                    UpdatedTree.Tree.Add(new NewTreeItem { Path = FileName, Mode = "100644", Type = TreeType.Blob, Sha = imgBlobRef.Sha });
-                }else{
                     var imgBlobRef = await github.Git.Blob.Create(owner, repo, imgBlob);
 
                     UpdatedTree.Tree.Add(new NewTreeItem { Path = FileName, Mode = "100644", Type = TreeType.Blob, Sha = imgBlobRef.Sha });
@@ -358,9 +361,9 @@ namespace CSharp_Image_Action
             return true;
         }
 
-        async public ValueTask<bool> SomethingAboutCommittingAnImage(System.IO.FileInfo fi)
+        async public ValueTask<bool> CommitBinaryFile(System.IO.FileInfo fi)
         {
-            return await AddorUpdateFile(fi);
+            return await AddorUpdateBinaryFile(fi);
         }
 
         async public ValueTask<bool> CommitAndPush()

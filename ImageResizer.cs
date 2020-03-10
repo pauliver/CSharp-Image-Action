@@ -83,7 +83,7 @@ namespace CSharp_Image_Action
                 //@@ is this going to give errors becuse its on a different thread now?
                 if(github.DoGitHubStuff)
                 {
-                    var AwaitVariable = github.SomethingAboutCommittingAnImage(id.ThumbNailFile);
+                    var AwaitVariable = github.CommitBinaryFile(id.ThumbNailFile);
                     if(!AwaitVariable.GetAwaiter().GetResult())
                     {
                         System.Console.WriteLine("Failed to add to GitHub Thumbnail for :" + id.Name);
@@ -112,7 +112,7 @@ namespace CSharp_Image_Action
                 //@@ is this going to give errors becuse its on a different thread now?
                 if(github.DoGitHubStuff)
                 {
-                    var AwaitVariable = github.SomethingAboutCommittingAnImage(id.ReSizedFileInfo);
+                    var AwaitVariable = github.CommittBinaryFile(id.ReSizedFileInfo);
                     if(!AwaitVariable.GetAwaiter().GetResult())
                     {
                         System.Console.WriteLine("Failed to add to GitHub Thumbnail for :" + id.Name);
