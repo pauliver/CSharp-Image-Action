@@ -317,7 +317,7 @@ namespace CSharp_Image_Action
                 // Create image blob
                 var imgBlob = new NewBlob { Encoding = EncodingType.Base64, Content = (imgBase64) };
 
-                string FileName = fi.FullName.Replace(repoDirectory.FullName,"");
+                string FileName = @"\" + fi.FullName.Replace(repoDirectory.FullName,"");
                 
                 bool FileExists = await JustOneFileExists( FileName );
 
