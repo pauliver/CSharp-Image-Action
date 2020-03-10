@@ -20,7 +20,7 @@ namespace CSharp_Image_Action
         // - we can accomidate for it here
         public static int ThreadsPerProcessor = 4;
 
-        static async System.Threading.Tasks.Task<bool> Main(string[] args)
+        static async System.Threading.Tasks.Task<int> Main(string[] args)
         {
             PaulsOKWrapper github;
             // Processors not cores, probably need something else in the future
@@ -31,7 +31,7 @@ namespace CSharp_Image_Action
             if(args.Length < 3)
             {
                 Console.WriteLine("need atleast 3 args");
-                return false;
+                return 1;
             }
             string[] extensionList = new string[]{".jpg",".png",".jpeg", ".JPG", ".PNG", ".JPEG", ".bmp", ".BMP"};
             System.IO.DirectoryInfo ImagesDirectory;
@@ -93,7 +93,7 @@ namespace CSharp_Image_Action
             }
             else{
                 Console.WriteLine("Second Arg must be a directory");
-                return false;
+                return 1;
             }
             if (ImgDir is string)
             {
@@ -106,7 +106,7 @@ namespace CSharp_Image_Action
             else
             {
                 Console.WriteLine("First Arg must be a directory");
-                return false;
+                return 1;
             }
             if (jsonPath is string)
             {
@@ -119,7 +119,7 @@ namespace CSharp_Image_Action
             else
             {
                 Console.WriteLine("Second Arg must be a directory that can lead to " + "\\" + Jekyll_data_Folder + "\\" + Jekyll_data_File);
-                return false;
+                return 1;
             }
             if(!fi.Directory.Exists)
             {
@@ -128,7 +128,7 @@ namespace CSharp_Image_Action
             if (ImagesDirectory.Exists == false) // VSCode keeps offering to "fix this" for me... 
             {
                 Console.WriteLine("Directory [" + ImgDir + "] Doesn't exist");
-                return false;
+                return 1;
             }
             if(!(domain is string))
             {
@@ -190,14 +190,17 @@ namespace CSharp_Image_Action
             Console.WriteLine("fixing up paths");
             DD.FixUpPaths(github.RepoDirectory);
 
-            bool successfull = true;
+            int successfull = 0;
 
             if(github.DoGitHubStuff && NumCommitted >= 1) // Need more than 1 changed file to try and commit things
             {
                 Console.WriteLine(NumCommitted + " Images were generated, now to push to push them to master");
 
                 //https://laedit.net/2016/11/12/GitHub-commit-with-Octokit-net.html
-                successfull = await github.CommitAndPush();
+                if(!await github.CommitAndPush())
+                {
+                    successfull = 2;
+                }
 
                 Console.WriteLine(" --- ");
             }else{
@@ -261,9 +264,16 @@ namespace CSharp_Image_Action
                 string PRname = "From " + CurrentBranch + " to " + GHPages;
 
                 bool StalePRSuccess = await github.FindStalePullRequests(PRname);
+                if(!StalePRSuccess && successfull == 0)
+                {
+                    successfull = 3;
+                } 
 
                 bool CreatePRSuccess = await github.CreateAndLabelPullRequest(PRname);
-                
+                if(!CreatePRSuccess && successfull == 0)
+                {
+                    successfull = 4;
+                } 
 
                 Console.WriteLine("Run has finished Exiting...");
             }
