@@ -131,6 +131,56 @@ namespace CSharp_Image_Action
             return true;
         } 
 
+        async public ValueTask<bool> CommitContainedImages(System.IO.DirectoryInfo GalleryPath, int commit_num = -1)
+        {
+            if(commit_num == -1)
+            {
+                // use latest
+            }else{
+                // use commit number
+            }
+            // https://snips-nlu.readthedocs.io/en/latest/data_model.html#builtin-entities-and-resolution
+
+
+            Octokit.CommitRequest ocr = new CommitRequest();
+            
+            // Only checking, check-ins into the gallery folder
+            ocr.Path = "/" + GalleryPath.Name + "/";
+
+            // in the past day (@@PAULIVER - CHANGE THIS TO WEEK)
+            ocr.Since = new DateTimeOffset(System.DateTime.UtcNow.AddDays(-1));
+            // until now
+            ocr.Until = new DateTimeOffset(System.DateTime.UtcNow);
+
+            // there was likely one, which would have triggered this script
+            try{
+                
+                // Get all the files modified
+                // Were any thumbnails deleted, were any resized images deleted?
+                // were any images added or removed
+                var commits = await github.Repository.Commit.GetAll(owner, repo, ocr, ApiOptions.None); DecrementAPICallsBy();
+
+                // find the last commit
+                foreach(GitHubCommit gc in commits)
+                {
+
+                }
+
+            }catch(Octokit.NotFoundException nfe)
+            {
+                Console.WriteLine("Not Found Exception : No images changed?");
+                Console.WriteLine(nfe.ToString());
+                // if no images were changed, then return false and we can skip all the time it take sto process images
+                return false;
+            }catch(Exception ex)
+            {
+                this.cleanlyLoggedIn = false;
+                Console.WriteLine(ex.ToString());
+            }
+
+            return true;
+        }
+
         protected string headMasterRef;
         protected Reference masterReference;
         protected Commit latestCommit;

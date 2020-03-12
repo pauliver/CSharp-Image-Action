@@ -48,6 +48,20 @@ namespace CSharp_Image_Action
             var jsonPath = args[1] + "\\" + Jekyll_data_Folder + "\\" + Jekyll_data_File;
             var repopath = args[1];
             var domain = args[2];
+            
+            if (ImgDir is string)
+            {
+                ImagesDirectory = new System.IO.DirectoryInfo(ImgDir);
+            }
+            else if (ImgDir as String != null)
+            {
+                ImagesDirectory = new System.IO.DirectoryInfo(ImgDir as string);
+            }
+            else
+            {
+                Console.WriteLine("First Arg must be a directory");
+                return 1;
+            }
 
             var GitHubStuff = false;
             if(args.Length >= 4 && args[3] is string && bool.Parse(args[3]))
@@ -60,6 +74,8 @@ namespace CSharp_Image_Action
             {
                 github.AttemptLogin();
             }
+
+            bool CommitContainedImages = true;
 
             if(GitHubStuff && github.CleanlyLoggedIn)
             {
@@ -81,7 +97,10 @@ namespace CSharp_Image_Action
                     {
                         AutoMergeLabel = args[8] as string;
                     }
+
                     github.SetupForMergesByLabel(AutoMergeLabel,CurrentBranch,GHPages);
+                    
+                    CommitContainedImages = await github.CommitContainedImages(ImagesDirectory);
 
                     bool commitsetup = await github.SetupCommit();
                     Console.WriteLine("Setup to commit changes: " + commitsetup.ToString());
@@ -95,19 +114,7 @@ namespace CSharp_Image_Action
                 Console.WriteLine("Second Arg must be a directory");
                 return 1;
             }
-            if (ImgDir is string)
-            {
-                ImagesDirectory = new System.IO.DirectoryInfo(ImgDir);
-            }
-            else if (ImgDir as String != null)
-            {
-                ImagesDirectory = new System.IO.DirectoryInfo(ImgDir as string);
-            }
-            else
-            {
-                Console.WriteLine("First Arg must be a directory");
-                return 1;
-            }
+            
             if (jsonPath is string)
             {
                 fi = new System.IO.FileInfo(jsonPath);
@@ -135,153 +142,159 @@ namespace CSharp_Image_Action
                 Console.WriteLine("arg 3 needs to be your domain");
             }
 
-            int NumCommitted = 0;
-
-            DirectoryDescriptor DD = new DirectoryDescriptor(ImagesDirectory.Name, ImagesDirectory.FullName);
-
-            // Traverse Image Directory
-            ImageHunter ih = new ImageHunter(ref DD,ImagesDirectory,extensionList);
-
-            string v = ih.NumberImagesFound.ToString();
-            Console.WriteLine(v + " Images Found") ;
-            
-            var ImagesList = ih.ImageList;
-
-            System.IO.DirectoryInfo thumbnail = new System.IO.DirectoryInfo(ImgDir + "\\" + THUMBNAILS);
-
-            if(!thumbnail.Exists)
-                thumbnail.Create();
-
-            Console.WriteLine("Images to be resized");
-
-            ImageResizer ir = new ImageResizer(thumbnail,256, 256, 1024, 1024, true, true);
-
-            //@@ Add Multithreading via thread pool here
-            foreach(ImageDescriptor id in ImagesList)
-            {
-                try{
-                    System.Console.WriteLine("Image: " +  id.Name);
-                    id.FillBasicInfo();
-
-                    if(ir.ThumbnailNeeded(id))
-                    {
-                        var increase_count = ir.GenerateThumbnail(id,github);
-                        if(github.DoGitHubStuff && increase_count)
-                        {
-                            ++NumCommitted;
-                        }
-                    }
-
-                    if(ir.NeedsResize(id))
-                    { // when our algorithm gets better, or or image sizes change
-                        var increase_count = ir.ResizeImages(id,github);
-                        if(github.DoGitHubStuff && increase_count)
-                        {
-                            ++NumCommitted;
-                        }
-                    }
-
-                }catch(Exception ex){
-                    Console.WriteLine(ex.ToString());   
-                }
-            }
-            Console.WriteLine("Images have been resized");
-
-            Console.WriteLine("fixing up paths");
-            DD.FixUpPaths(github.RepoDirectory);
-
             int successfull = 0;
 
-            github.SetNumberImagesCommitted(NumCommitted);
+            if(CommitContainedImages)
+            {            
+                int NumCommitted = 0;
+             
+                DirectoryDescriptor DD = new DirectoryDescriptor(ImagesDirectory.Name, ImagesDirectory.FullName);
 
-            if(github.DoGitHubStuff && NumCommitted >= 1) // Need more than 1 changed file to try and commit things
-            {
-                Console.WriteLine(NumCommitted + " Images were generated, now to push to push them to master");
+                // Traverse Image Directory
+                ImageHunter ih = new ImageHunter(ref DD,ImagesDirectory,extensionList);
 
-                int RateLimitCallsLeft = github.DecrementAPICallsBy(0);
-                if( (NumCommitted * 2) > RateLimitCallsLeft )
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("WARNING!!!!");
-                    Console.WriteLine();
-                    Console.WriteLine("WARNING!!!!");
-                    Console.WriteLine();
-                    Console.WriteLine("WARNING!!!!");
-                    Console.WriteLine();
-                    Console.WriteLine("GitHub API Will rate limit to 1000 calls an hour. you are adding " + NumCommitted + " files and you have " + RateLimitCallsLeft + " API calls left");
-                    Console.WriteLine();
-                    Console.WriteLine("WARNING!!!!");
-                    Console.WriteLine();
-                    Console.WriteLine("WARNING!!!!");
-                    Console.WriteLine();
-                    Console.WriteLine("WARNING!!!!");
-                    Console.WriteLine();
-                }
-
-                //https://laedit.net/2016/11/12/GitHub-commit-with-Octokit-net.html
-                if(!await github.CommitAndPush())
-                {
-                    successfull = 2;
-                }
-
-                Console.WriteLine(" --- ");
-            }else{
-                Console.WriteLine("No images were altered, nothing to push to main");
-            }
-            
-            Console.WriteLine("Domain Set to: " + domain );
-
-            DD.SaveMDFiles(domain, ImagesDirectory, github); //This follows another path...
-            Console.WriteLine("Image indexes written");
-
-
-
-            var encoderSettings = new TextEncoderSettings();
-            encoderSettings.AllowCharacters('\u0436', '\u0430');
-            encoderSettings.AllowRange(UnicodeRanges.BasicLatin);
-            var options = new JsonSerializerOptions
-            {
-                IgnoreReadOnlyProperties = false,
-                WriteIndented = true,
-                IgnoreNullValues = false,
-                //Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
-            };
-            var jsonString = JsonSerializer.Serialize<DirectoryDescriptor>(DD, options);
-            {
-                var fs = fi.Create();
-                System.IO.TextWriter tw = new System.IO.StreamWriter(fs);
-                tw.Write(jsonString);
-                tw.Close();
-                //fs.Close();    
-            }
-            Console.WriteLine("Json written");
-
-            if(github.DoGitHubStuff && NumCommitted >= 1)
-            {
-                Console.WriteLine("Committing Json files");
-
-                await github.ImmediatlyAddorUpdateTextFile(fi);
-
-                System.IO.FileInfo NewPath = new System.IO.FileInfo(args[1] + "\\_includes\\gallery.json");
-                if(NewPath.Exists)
-                {
-                    NewPath.Delete();
-                }
-                System.IO.File.Copy( fi.FullName, NewPath.FullName);
+                string v = ih.NumberImagesFound.ToString();
+                Console.WriteLine(v + " Images Found") ;
                 
-                await github.ImmediatlyAddorUpdateTextFile(NewPath);
+                var ImagesList = ih.ImageList;
 
-                Console.WriteLine("Json files Committed");
-                Console.WriteLine(" --- ");
-            }else{
-                Console.WriteLine("No Images Altered, No Json files Committed");
-                Console.WriteLine(" --- ");
+                System.IO.DirectoryInfo thumbnail = new System.IO.DirectoryInfo(ImgDir + "\\" + THUMBNAILS);
+
+                if(!thumbnail.Exists)
+                    thumbnail.Create();
+
+                Console.WriteLine("Images to be resized");
+
+                ImageResizer ir = new ImageResizer(thumbnail,256, 256, 1024, 1024, true, true);
+
+                //@@ Add Multithreading via thread pool here
+                foreach(ImageDescriptor id in ImagesList)
+                {
+                    try{
+                        System.Console.WriteLine("Image: " +  id.Name);
+                        id.FillBasicInfo();
+
+                        if(ir.ThumbnailNeeded(id))
+                        {
+                            var increase_count = ir.GenerateThumbnail(id,github);
+                            if(github.DoGitHubStuff && increase_count)
+                            {
+                                ++NumCommitted;
+                            }
+                        }
+
+                        if(ir.NeedsResize(id))
+                        { // when our algorithm gets better, or or image sizes change
+                            var increase_count = ir.ResizeImages(id,github);
+                            if(github.DoGitHubStuff && increase_count)
+                            {
+                                ++NumCommitted;
+                            }
+                        }
+
+                    }catch(Exception ex){
+                        Console.WriteLine(ex.ToString());   
+                    }
+                }
+                Console.WriteLine("Images have been resized");
+
+                Console.WriteLine("fixing up paths");
+                DD.FixUpPaths(github.RepoDirectory);
+
+
+                github.SetNumberImagesCommitted(NumCommitted);
+
+                if(github.DoGitHubStuff && NumCommitted >= 1) // Need more than 1 changed file to try and commit things
+                {
+                    Console.WriteLine(NumCommitted + " Images were generated, now to push to push them to master");
+
+                    int RateLimitCallsLeft = github.DecrementAPICallsBy(0);
+                    if( (NumCommitted * 2) > RateLimitCallsLeft )
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("WARNING!!!!");
+                        Console.WriteLine();
+                        Console.WriteLine("WARNING!!!!");
+                        Console.WriteLine();
+                        Console.WriteLine("WARNING!!!!");
+                        Console.WriteLine();
+                        Console.WriteLine("GitHub API Will rate limit to 1000 calls an hour. you are adding " + NumCommitted + " files and you have " + RateLimitCallsLeft + " API calls left");
+                        Console.WriteLine();
+                        Console.WriteLine("WARNING!!!!");
+                        Console.WriteLine();
+                        Console.WriteLine("WARNING!!!!");
+                        Console.WriteLine();
+                        Console.WriteLine("WARNING!!!!");
+                        Console.WriteLine();
+                    }
+
+                    //https://laedit.net/2016/11/12/GitHub-commit-with-Octokit-net.html
+                    if(!await github.CommitAndPush())
+                    {
+                        successfull = 2;
+                    }
+
+                    Console.WriteLine(" --- ");
+                }else{
+                    Console.WriteLine("No images were altered, nothing to push to main");
+                }
+                
+                Console.WriteLine("Domain Set to: " + domain );
+
+                DD.SaveMDFiles(domain, ImagesDirectory, github); //This follows another path...
+                Console.WriteLine("Image indexes written");
+
+
+
+                var encoderSettings = new TextEncoderSettings();
+                encoderSettings.AllowCharacters('\u0436', '\u0430');
+                encoderSettings.AllowRange(UnicodeRanges.BasicLatin);
+                var options = new JsonSerializerOptions
+                {
+                    IgnoreReadOnlyProperties = false,
+                    WriteIndented = true,
+                    IgnoreNullValues = false,
+                    //Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
+                };
+                var jsonString = JsonSerializer.Serialize<DirectoryDescriptor>(DD, options);
+                {
+                    var fs = fi.Create();
+                    System.IO.TextWriter tw = new System.IO.StreamWriter(fs);
+                    tw.Write(jsonString);
+                    tw.Close();
+                    //fs.Close();    
+                }
+                Console.WriteLine("Json written");
+
+                if(github.DoGitHubStuff && NumCommitted >= 1)
+                {
+                    Console.WriteLine("Committing Json files");
+
+                    await github.ImmediatlyAddorUpdateTextFile(fi);
+
+                    System.IO.FileInfo NewPath = new System.IO.FileInfo(args[1] + "\\_includes\\gallery.json");
+                    if(NewPath.Exists)
+                    {
+                        NewPath.Delete();
+                    }
+                    System.IO.File.Copy( fi.FullName, NewPath.FullName);
+                    
+                    await github.ImmediatlyAddorUpdateTextFile(NewPath);
+
+                    Console.WriteLine("Json files Committed");
+                    Console.WriteLine(" --- ");
+                }else{
+                    Console.WriteLine("No Images Altered, No Json files Committed");
+                    Console.WriteLine(" --- ");
+                }
+
+                // do we need a synronication point here? lots of things could be going on in parallel
+                // DO NOT TRY AND GET CLEVER AND || your github api usage. it will end in tears
+                // if you are looking at this call, you are about to do something stupid, don't do it.
+                await github.SyncPoint(true);
+
             }
 
-            // do we need a synronication point here? lots of things could be going on in parallel
-            // DO NOT TRY AND GET CLEVER AND || your github api usage. it will end in tears
-            // if you are looking at this call, you are about to do something stupid, don't do it.
-            await github.SyncPoint(true);
 
             if(github.DoGitHubStuff)
             {
