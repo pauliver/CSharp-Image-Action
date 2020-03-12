@@ -227,6 +227,8 @@ namespace CSharp_Image_Action
                 Console.WriteLine("No images were altered, nothing to push to main");
             }
             
+            Console.WriteLine("Domain Set to: " + domain );
+
             DD.SaveMDFiles(domain, ImagesDirectory, github); //This follows another path...
             Console.WriteLine("Image indexes written");
 

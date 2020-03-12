@@ -92,7 +92,7 @@ namespace CSharp_Image_Action
             }
             //we need to overwrite them even if they exist (but we need some fortmat to allow edits)
             {
-                CreateIndexFile(indexfilename, Domain, ImagesDirectory);
+                CreateIndexFile( Domain, ImagesDirectory, indexfilename);
                 System.Console.WriteLine("Create : " + indexfilename.FullName);
             }
             
@@ -106,7 +106,7 @@ namespace CSharp_Image_Action
         }
 
 
-        public void CreateIndexFile(System.IO.FileInfo fi, string Domain, System.IO.DirectoryInfo ImagesDirectory)
+        public void CreateIndexFile( string Domain,  System.IO.DirectoryInfo ImagesDirectory, System.IO.FileInfo fi)
         {
             System.IO.TextWriter tw = fi.CreateText();
             //bool DirectoryListing = false;
