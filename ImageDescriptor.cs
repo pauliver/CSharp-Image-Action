@@ -96,7 +96,7 @@ namespace CSharp_Image_Action
                 System.Console.WriteLine("Create : " + indexfilename.FullName);
             }
             
-            if(github.DoGitHubStuff)
+            if(github.DoGitHubStuff && github.ImagesWereCommtted)
             {
                 System.Threading.Tasks.ValueTask<bool> task =  github.ImmediatlyAddorUpdateTextFile(indexfilename);
 

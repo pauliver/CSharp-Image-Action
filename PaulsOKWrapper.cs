@@ -26,6 +26,7 @@ namespace CSharp_Image_Action
         public bool CleanlyLoggedIn { get => cleanlyLoggedIn; }
         public DirectoryInfo RepoDirectory { get => repoDirectory; set => repoDirectory = value; }
         public bool DoGitHubStuff { get => gitHubStuff; set => gitHubStuff = value; }
+        public bool ImagesWereCommtted { get => imagesWereCommtted; }
 
         protected string email;
         protected string username;
@@ -216,6 +217,17 @@ namespace CSharp_Image_Action
                 return true;
             }
             return false;
+        }
+
+        protected bool imagesWereCommtted = false;
+        public void SetNumberImagesCommitted(int NumCommitted)
+        {
+            if(NumCommitted >= 1)
+            {
+                imagesWereCommtted = true; 
+            }else{
+                imagesWereCommtted = false;
+            }
         }
 
         async public ValueTask<bool> ImmediatlyAddorUpdateTextFile(System.IO.FileInfo fi)

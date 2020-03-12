@@ -192,6 +192,8 @@ namespace CSharp_Image_Action
 
             int successfull = 0;
 
+            github.SetNumberImagesCommitted(NumCommitted);
+
             if(github.DoGitHubStuff && NumCommitted >= 1) // Need more than 1 changed file to try and commit things
             {
                 Console.WriteLine(NumCommitted + " Images were generated, now to push to push them to master");
@@ -254,7 +256,7 @@ namespace CSharp_Image_Action
             }
             Console.WriteLine("Json written");
 
-            if(github.DoGitHubStuff)
+            if(github.DoGitHubStuff && NumCommitted >= 1)
             {
                 Console.WriteLine("Committing Json files");
 
@@ -271,9 +273,14 @@ namespace CSharp_Image_Action
 
                 Console.WriteLine("Json files Committed");
                 Console.WriteLine(" --- ");
+            }else{
+                Console.WriteLine("No Images Altered, No Json files Committed");
+                Console.WriteLine(" --- ");
             }
 
             // do we need a synronication point here? lots of things could be going on in parallel
+            // DO NOT TRY AND GET CLEVER AND || your github api usage. it will end in tears
+            // if you are looking at this call, you are about to do something stupid, don't do it.
             await github.SyncPoint(true);
 
             if(github.DoGitHubStuff)
