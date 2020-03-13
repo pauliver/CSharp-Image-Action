@@ -147,8 +147,8 @@ namespace CSharp_Image_Action
             // Only checking, check-ins into the gallery folder
             ocr.Path = "/" + GalleryPath.Name + "/";
 
-            // in the past day (@@PAULIVER - CHANGE THIS TO WEEK)
-            ocr.Since = new DateTimeOffset(System.DateTime.UtcNow.AddDays(-1));
+            // in the past day 1 hour (@@PAULIVER - CHANGE THIS TO WEEK)
+            ocr.Since = new DateTimeOffset(System.DateTime.UtcNow.AddHours(-1));
             // until now
             ocr.Until = new DateTimeOffset(System.DateTime.UtcNow);
 
@@ -161,9 +161,9 @@ namespace CSharp_Image_Action
                 var commits = await github.Repository.Commit.GetAll(owner, repo, ocr, ApiOptions.None); DecrementAPICallsBy();
 
                 // find the last commit
-                foreach(GitHubCommit gc in commits)
+                //foreach(GitHubCommit gc in commits)
                 {
-
+                    //Console.WriteLine(gc.ToString());
                 }
 
             }catch(Octokit.NotFoundException nfe)
