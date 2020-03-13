@@ -100,10 +100,11 @@ namespace CSharp_Image_Action
 
                     github.SetupForMergesByLabel(AutoMergeLabel,CurrentBranch,GHPages);
                     
-                    CommitContainedImages = await github.CommitContainedImages(ImagesDirectory);
-
                     bool commitsetup = await github.SetupCommit();
                     Console.WriteLine("Setup to commit changes: " + commitsetup.ToString());
+
+                    CommitContainedImages = await github.CommitContainedImages(ImagesDirectory);
+
                 }
             }
             if(repopath is string || repopath as string != null)

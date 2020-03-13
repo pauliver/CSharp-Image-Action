@@ -133,6 +133,8 @@ namespace CSharp_Image_Action
 
         async public ValueTask<bool> CommitContainedImages(System.IO.DirectoryInfo GalleryPath, int commit_num = -1)
         {
+            TestCleanlyLoggedIn();
+            
             if(commit_num == -1)
             {
                 // use latest
