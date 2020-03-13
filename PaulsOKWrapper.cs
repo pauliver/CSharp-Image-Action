@@ -149,8 +149,8 @@ namespace CSharp_Image_Action
             // Only checking, check-ins into the gallery folder
             ocr.Path = "/" + GalleryPath.Name + "/";
 
-            // in the past day 1 hour (@@PAULIVER - CHANGE THIS TO WEEK)
-            ocr.Since = new DateTimeOffset(System.DateTime.UtcNow.AddHours(-1));
+            // in the past 1 day  (@@PAULIVER - CHANGE THIS TO WEEK)
+            ocr.Since = new DateTimeOffset(System.DateTime.UtcNow.AddDays(-1));
             // until now
             ocr.Until = new DateTimeOffset(System.DateTime.UtcNow);
 
@@ -163,19 +163,27 @@ namespace CSharp_Image_Action
                 var commits = await github.Repository.Commit.GetAll(owner, repo, ocr, ApiOptions.None); DecrementAPICallsBy();
 
                 Console.WriteLine("There have been " + commits.Count + " Commits");
-                
+
                 Console.Write("   From " );
                 if(ocr.Since != null)
                     Console.Write(ocr.Since.Value.ToString("MMMM dd h:mm tt"));
                 Console.Write(" to ");
                 if(ocr.Until != null)
                     Console.Write(ocr.Until.Value.ToString("MMMM dd h:mm tt")); 
-                
-                // find the last commit
-                foreach(GitHubCommit gc in commits)
+                Console.WriteLine("  --:");
+
+                if(commits.Count == 0)
                 {
-                    Console.WriteLine(gc.ToString());
+                    return false;
                 }
+
+                // go backwards through commits and see what was added since the last .json commit
+                // were there any images?
+
+                //foreach(GitHubCommit gc in commits)
+                //{
+                //    Console.WriteLine(gc.ToString());
+                //}
 
             }catch(Octokit.NotFoundException nfe)
             {
