@@ -161,9 +161,9 @@ namespace CSharp_Image_Action
                 var commits = await github.Repository.Commit.GetAll(owner, repo, ocr, ApiOptions.None); DecrementAPICallsBy();
 
                 // find the last commit
-                //foreach(GitHubCommit gc in commits)
+                foreach(GitHubCommit gc in commits)
                 {
-                    //Console.WriteLine(gc.ToString());
+                    Console.WriteLine(gc.ToString());
                 }
 
             }catch(Octokit.NotFoundException nfe)
