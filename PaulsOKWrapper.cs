@@ -162,6 +162,15 @@ namespace CSharp_Image_Action
                 // were any images added or removed
                 var commits = await github.Repository.Commit.GetAll(owner, repo, ocr, ApiOptions.None); DecrementAPICallsBy();
 
+                Console.WriteLine("There have been " + commits.Count + " Commits");
+                
+                Console.Write("   From " );
+                if(ocr.Since != null)
+                    Console.Write(ocr.Since.Value.ToString("MMMM dd h:mm tt"));
+                Console.Write(" to ");
+                if(ocr.Until != null)
+                    Console.Write(ocr.Until.Value.ToString("MMMM dd h:mm tt")); 
+                
                 // find the last commit
                 foreach(GitHubCommit gc in commits)
                 {
