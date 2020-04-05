@@ -307,6 +307,11 @@ namespace CSharp_Image_Action
                 string PRname = "From " + CurrentBranch + " to " + GHPages;
 
                 bool StalePRSuccess = await github.FindStalePullRequests(PRname);
+                if(StalePRSuccess)
+                {
+                    Console.WriteLine("add Attempt to close stale pull request here");
+                    //StalePRSuccess = await github.CloseStalePullRequests(PRname); 
+                }
                 if(!StalePRSuccess && successfull == 0)
                 {
                     successfull = 3;
