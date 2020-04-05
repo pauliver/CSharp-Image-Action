@@ -347,8 +347,13 @@ namespace CSharp_Image_Action
             }
             return true;
         }
+        
+        public async ValueTask<bool> CloseStalePullRequests(string PRname)
+        {
+            return await FindStalePullRequests(PRname, false);
+        }
 
-        public async ValueTask<bool> FindStalePullRequests(string PRname)
+        public async ValueTask<bool> FindStalePullRequests(string PRname, bool try_and_close = false)
         {
             TestCleanlyLoggedIn();
 
@@ -369,6 +374,10 @@ namespace CSharp_Image_Action
                     {
                         Console.WriteLine("It looks like you have an existing PR still open");
                         Console.WriteLine("This is likely to fail, unless you close : " + pr.Title);
+                        if(try_and_close)
+                        {
+                                //await github.PullRequest.Close   
+                        }
                     }
                     ShouldClose = false;
                 }
