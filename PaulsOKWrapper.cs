@@ -359,6 +359,8 @@ namespace CSharp_Image_Action
 
             bool ShouldClose = false;
 
+            bool FoundAnyStale = false;
+
             var prs = await github.PullRequest.GetAllForRepository(owner,repo);
             
             foreach(PullRequest pr in prs)
@@ -372,6 +374,7 @@ namespace CSharp_Image_Action
                     }
                     if(ShouldClose)
                     {
+                        FoundAnyStale = true;
                         Console.WriteLine("It looks like you have an existing PR still open");
                         Console.WriteLine("This is likely to fail, unless you close : " + pr.Title);
                         if(try_and_close)
@@ -385,7 +388,7 @@ namespace CSharp_Image_Action
                     ShouldClose = false;
                 }
             }
-            return true;
+            return FoundAnyStale;
         }
 
         async public ValueTask<bool> CreateAndLabelPullRequest(string PRname)
