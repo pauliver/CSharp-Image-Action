@@ -376,7 +376,10 @@ namespace CSharp_Image_Action
                         Console.WriteLine("This is likely to fail, unless you close : " + pr.Title);
                         if(try_and_close)
                         {
-                                //await github.PullRequest.Close   
+                            PullRequestUpdate pru = new PullRequestUpdate();
+                            pru.State = ItemState.Closed;
+                            var newpr = await github.PullRequest.Update(owner,repo,(int)pr.Id,pru); DecrementAPICallsBy();
+                            Console.WriteLine("New Pr: " + newpr.Title + " is now " + newpr.State );
                         }
                     }
                     ShouldClose = false;

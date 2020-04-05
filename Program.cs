@@ -296,6 +296,7 @@ namespace CSharp_Image_Action
 
             }
 
+            bool APICALLSAVING = true; //code that we are only doing because we have 1k API calls an hour
 
             if(github.DoGitHubStuff)
             {
@@ -307,21 +308,56 @@ namespace CSharp_Image_Action
                 string PRname = "From " + CurrentBranch + " to " + GHPages;
 
                 bool StalePRSuccess = await github.FindStalePullRequests(PRname);
-                if(StalePRSuccess)
+                
+                
+                if(!APICALLSAVING && StalePRSuccess)
                 {
+                    //would prefer to close out and re-open, but need to save API Calls
                     Console.WriteLine("add Attempt to close stale pull request here");
-                    //StalePRSuccess = await github.CloseStalePullRequests(PRname); 
+                    StalePRSuccess = await github.CloseStalePullRequests(PRname); 
                 }
+
                 if(!StalePRSuccess && successfull == 0)
                 {
                     successfull = 3;
                 } 
 
-                bool CreatePRSuccess = await github.CreateAndLabelPullRequest(PRname);
-                if(!CreatePRSuccess && successfull == 0)
+                if(APICALLSAVING)
                 {
-                    successfull = 4;
-                } 
+                    // would prefer to close PR"s and re-open, but gotta save them API calls, 
+                    //    only get 1k an hour
+                    if(!StalePRSuccess)
+                    {
+                        bool CreatePRSuccess = await github.CreateAndLabelPullRequest(PRname);
+                        if(!CreatePRSuccess && successfull == 0)
+                        {
+                            successfull = 4;
+                        } 
+
+                    }else{
+                        Console.WriteLine("PR Already exists, so not creating one - saving API calls");
+                    }
+                }else{
+                    bool CreatePRSuccess = await github.CreateAndLabelPullRequest(PRname);
+                    if(!CreatePRSuccess && successfull == 0)
+                    {
+                        successfull = 4;
+                    } 
+                }
+
+                if(!StalePRSuccess)
+                {
+                    bool CreatePRSuccess = await github.CreateAndLabelPullRequest(PRname);
+                    if(!CreatePRSuccess && successfull == 0)
+                    {
+                        successfull = 4;
+                    } 
+
+                }else{
+                    // would prefer to close PR"s and re-open, but gotta save them API calls, 
+                    //    only get 1k an hour
+                    Console.WriteLine("PR Already exists, so not creating one - saving API calls");
+                }
 
                 github.RefreshRateLimits();
                 Console.WriteLine("Run has finished Exiting...");
