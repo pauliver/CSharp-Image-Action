@@ -337,26 +337,14 @@ namespace CSharp_Image_Action
                     }else{
                         Console.WriteLine("PR Already exists, so not creating one - saving API calls");
                     }
+
                 }else{
+                    
                     bool CreatePRSuccess = await github.CreateAndLabelPullRequest(PRname);
                     if(!CreatePRSuccess && successfull == 0)
                     {
                         successfull = 4;
                     } 
-                }
-
-                if(!StalePRSuccess)
-                {
-                    bool CreatePRSuccess = await github.CreateAndLabelPullRequest(PRname);
-                    if(!CreatePRSuccess && successfull == 0)
-                    {
-                        successfull = 4;
-                    } 
-
-                }else{
-                    // would prefer to close PR"s and re-open, but gotta save them API calls, 
-                    //    only get 1k an hour
-                    Console.WriteLine("PR Already exists, so not creating one - saving API calls");
                 }
 
                 github.RefreshRateLimits();
