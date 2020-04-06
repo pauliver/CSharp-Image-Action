@@ -349,6 +349,7 @@ namespace CSharp_Image_Action
 
                 github.RefreshRateLimits();
                 Console.WriteLine("Run has finished Exiting...");
+                Console.WriteLine("Current Code is : " + successfull.ToString());
             }
             return successfull;
         }
