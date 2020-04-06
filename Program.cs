@@ -309,6 +309,10 @@ namespace CSharp_Image_Action
 
                 bool StalePRSuccess = await github.FindStalePullRequests(PRname);
                 
+                if(!StalePRSuccess && successfull == 0)
+                {
+                    successfull = 3;
+                }
                 
                 if(!APICALLSAVING && StalePRSuccess)
                 {
@@ -317,10 +321,6 @@ namespace CSharp_Image_Action
                     StalePRSuccess = await github.CloseStalePullRequests(PRname); 
                 }
 
-                if(!StalePRSuccess && successfull == 0)
-                {
-                    successfull = 3;
-                } 
 
                 if(APICALLSAVING)
                 {
@@ -350,6 +350,10 @@ namespace CSharp_Image_Action
                 github.RefreshRateLimits();
                 Console.WriteLine("Run has finished Exiting...");
                 Console.WriteLine("Current Code is : " + successfull.ToString());
+            }
+            if(successfull == 3 || successfull == 4)
+            {// let's not say we failed in these cases.
+                return 0;
             }
             return successfull;
         }
