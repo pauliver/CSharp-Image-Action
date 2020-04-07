@@ -351,6 +351,8 @@ namespace CSharp_Image_Action
                 Console.WriteLine("Run has finished Exiting...");
                 Console.WriteLine("Current Code is : " + successfull.ToString());
             }
+            
+            github.PrintRateLimits();
             if(successfull == 3 || successfull == 4)
             {// let's not say we failed in these cases.
                 return 0;
