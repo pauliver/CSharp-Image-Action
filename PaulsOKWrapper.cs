@@ -55,6 +55,23 @@ namespace CSharp_Image_Action
             Console.WriteLine("Repo set to : " + this.repo);
             return true;
         }
+        
+        public bool PrintRateLimits()
+        {
+            try{
+                Task<MiscellaneousRateLimit> limits = github.Miscellaneous.GetRateLimits();
+                var awaitlimits = limits.GetAwaiter().GetResult(); 
+                APICallsRemaining = awaitlimits.Rate.Remaining;
+                Console.WriteLine("Rate Limit Total: " + awaitlimits.Rate.Limit);
+                Console.WriteLine("Rate Limit Remaing: " + APICallsRemaining);
+                Console.WriteLine("Rate Limit Resets: " + awaitlimits.Rate.Reset.ToString("MM/dd/yyyy h:mm tt"));   
+                }catch(Exception rc)
+                {
+                    Console.Write(rc.ToString());
+                    return false;
+                }   
+            return true;
+        }
 
         public bool AttemptLogin()
         {
